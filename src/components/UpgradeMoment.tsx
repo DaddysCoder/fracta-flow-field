@@ -22,7 +22,7 @@ export function UpgradeMoment({ strategyName }: { strategyName: string }) {
       </div>
       <p className="text-[14.5px] text-secondary leading-relaxed mb-6 max-w-[480px]">
         Free includes the full strategy library with mechanism and citation for every entry, for
-        up to 2 participants. Pro adds AI-personalised drafting, using your participant&apos;s own
+        up to 2 participants. Pro adds personalised drafting, matched from your participant&apos;s own
         profile and capacity notes.
       </p>
       <div className="flex gap-[18px] items-center flex-wrap">

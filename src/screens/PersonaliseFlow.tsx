@@ -106,7 +106,7 @@ export function PersonaliseFlow() {
         A draft to review, never the final word.
       </h1>
       <p className="text-[15px] text-secondary mb-10 max-w-[600px] leading-relaxed">
-        Capacity note, then an optional AI draft, then a review step that&apos;s always editable
+        Capacity note, then an optional matched draft, then a review step that&apos;s always editable
         before saving &mdash; for <span className="font-semibold text-ink-soft">{strategy.name}</span>.
       </p>
 
@@ -166,7 +166,7 @@ export function PersonaliseFlow() {
             </>
           ) : (
             <div className="bg-surface rounded-lg p-3.5">
-              <div className="font-bold text-[13.5px] text-muted mb-1">AI unavailable</div>
+              <div className="font-bold text-[13.5px] text-muted mb-1">Can&apos;t match yet</div>
               <p className="text-[12.5px] text-secondary leading-snug">
                 This participant&apos;s profile is missing information the draft needs:{' '}
                 {missingFields.join(' and ')}.

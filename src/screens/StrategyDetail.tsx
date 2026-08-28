@@ -69,9 +69,6 @@ export function StrategyDetail() {
           to={`/strategy/${strategy.id}/personalise`}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-btn bg-accent text-white text-[13.5px] font-semibold focus-ring hover:bg-accent-hover transition-colors duration-100"
         >
-          <span className="font-mono text-[9px] font-semibold tracking-wide bg-white/20 px-1.5 py-0.5 rounded">
-            AI
-          </span>
           Personalise for a participant
         </Link>
       </div>
