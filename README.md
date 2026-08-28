@@ -13,10 +13,12 @@ spacing, motion) documented there.
 
 ## Stack
 
-React 18 + TypeScript + Vite + Tailwind CSS + react-router. No backend, no API
-key, no network call — personalisation is local, deterministic template
-matching, and participant profile/drafts are stored in `localStorage` so the
-full flow can be reviewed and demoed with nothing but `npm run dev`.
+React 18 + TypeScript + Vite + Tailwind CSS + react-router, deployed as a
+Cloudflare Worker (static assets + a small API). Personalisation itself is
+still local, deterministic template matching — no model call, no network
+dependency for that part. Participant profile/drafts stay in `localStorage`.
+The Worker only handles account/billing: email sign-in and the Stripe Pro
+subscription (see "Auth & billing" below).
 
 ## Structure
 
@@ -42,22 +44,71 @@ full flow can be reviewed and demoed with nothing but `npm run dev`.
   Upgrade Moment and the three error states as sub-states of this screen),
   Output View, and Intake/Profile.
 - `src/components` — shared UI: the mechanism + citation unit, evidence badges,
-  the superseded band, strategy cards.
+  the superseded band, strategy cards, `AuthModal` (email + one-time code).
+- `src/state/auth.tsx` — `useAuth()`: sign-in state, the Pro/Free `plan` (from
+  the Worker's `/api/entitlement`, not a local flag), `checkout()` /
+  `manageBilling()` (redirect to Stripe Checkout / Billing Portal).
+- `worker/` — the Cloudflare Worker: email one-time-code auth (signed,
+  stateless session tokens — no session store), Stripe Checkout/Billing Portal
+  session creation, and the Stripe webhook that keeps entitlement state in KV.
+  See `worker/index.ts` for the route list.
 
 ## Running
 
 ```sh
 npm install
-npm run dev
+npm run dev          # frontend only, http://localhost:5173
+npm run worker:dev    # Worker, http://localhost:8787 — vite proxies /api to it
 ```
 
-No environment variables or secrets are required — everything runs client-side.
+The frontend runs standalone with `npm run dev` — sign-in/checkout calls will
+just fail gracefully (they hit `/api/...`, which 404s with no Worker running).
+For local auth/billing testing, run `worker:dev` alongside `dev` in a second
+terminal, with the secrets below set in `.dev.vars` (gitignored).
 
-A "Plan: Free/Pro (toggle)" control in the bottom-right corner switches the
-paywall gate for demo purposes — clicking Match variant as Free triggers the
-Upgrade Moment; as Pro it runs the real local matching. A DEV-only "Simulate"
-control on the Personalisation Flow screen (hidden in production builds) forces
-each of the three outcomes for review without needing real variant content.
+A "Dev preview: Force Pro/Free" control in the bottom-right corner (DEV builds
+only) previews the Pro-gated UI without a running Worker or a real
+subscription — it does not touch real entitlement state. A DEV-only
+"Simulate" control on the Personalisation Flow screen still forces each of the
+three *matching* outcomes for review, independent of plan.
+
+## Auth & billing setup
+
+Email sign-in issues a 6-digit one-time code via Resend and a signed session
+token (HMAC, `SESSION_SECRET`) — no passwords, no session database. Stripe
+Checkout/Billing Portal sessions are created server-side; the webhook updates
+each email's entitlement record in KV. Participant data never touches this —
+it's `localStorage`-only, same as before.
+
+**Non-secret config** — edit directly in `wrangler.jsonc` → `vars`:
+
+- `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY` — the two Price IDs for Field
+  Pro (A$29/mo, A$290/yr, both with a 14-day trial baked into the Worker's
+  Checkout Session call).
+- `FROM_EMAIL` — the Resend-verified sender for login codes.
+- `APP_ORIGIN` — the deployed app's URL (used for Checkout/Portal redirects).
+
+**Secrets** — set with `wrangler secret put <NAME>` (prompts for the value,
+never echoes or logs it), or via the Cloudflare dashboard once the Worker has
+deployed at least once with `main` set (Workers & Pages → fracta-flow-field →
+Settings → Variables and Secrets → encrypt):
+
+```sh
+wrangler secret put STRIPE_SECRET_KEY       # Stripe secret key
+wrangler secret put STRIPE_WEBHOOK_SECRET   # from the Stripe webhook endpoint you create below
+wrangler secret put RESEND_API_KEY          # Resend API key
+wrangler secret put SESSION_SECRET          # any long random string, e.g. `openssl rand -hex 32`
+```
+
+Also register a Stripe webhook endpoint pointing at
+`https://<your-worker-domain>/api/webhook/stripe`, subscribed to
+`customer.subscription.created`, `customer.subscription.updated`, and
+`customer.subscription.deleted` — its signing secret is
+`STRIPE_WEBHOOK_SECRET` above.
+
+If a secret is ever pasted somewhere it could be logged (chat, a shared
+terminal, a committed file), rotate it in the provider's dashboard before
+using it — treat it as already compromised.
 
 ## Not in this pass
 

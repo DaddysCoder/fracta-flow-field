@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fracta-flow-field",
+  "main": "worker/index.ts",
+  "compatibility_date": "2024-11-01",
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "kv_namespaces": [
+    { "binding": "FIELD_KV", "id": "b25ef29e1a664f7e8cd93619f862057d" }
+  ],
+  // Non-secret config. Secrets (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
+  // RESEND_API_KEY, SESSION_SECRET) are set with `wrangler secret put <NAME>`
+  // and must never be committed here — see README.md "Stripe & auth setup".
+  "vars": {
+    "STRIPE_PRICE_MONTHLY": "price_1U9NfDFIXid8q5wwqQdbupaa",
+    "STRIPE_PRICE_YEARLY": "price_1U9NfJFIXid8q5wwUmwkbngg",
+    "FROM_EMAIL": "Field by WhatBit <login@whatbit.dev>",
+    "APP_ORIGIN": "https://field.whatbit.dev"
+  }
+}

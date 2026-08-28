@@ -4,7 +4,7 @@ import { getStrategyById } from '../lib/strategy-library/strategies';
 import { MechanismCitationUnit } from '../components/MechanismCitationUnit';
 import { UpgradeMoment } from '../components/UpgradeMoment';
 import { PersonaliseErrorCard } from '../components/ErrorStates';
-import { usePlan } from '../state/plan';
+import { useAuth } from '../state/auth';
 import { loadProfile } from '../lib/participant-profile/storage';
 import { isSuiteConnected } from '../lib/participant-profile/suite-detection';
 import { missingPersonalisationFields } from '../lib/participant-profile/types';
@@ -29,7 +29,7 @@ export function PersonaliseFlow() {
   const { id } = useParams();
   const navigate = useNavigate();
   const strategy = id ? getStrategyById(id) : undefined;
-  const { plan } = usePlan();
+  const { plan } = useAuth();
 
   const profile = loadProfile(isSuiteConnected());
   const missingFields = missingPersonalisationFields(profile);
