@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#FAFAF9;-webkit-font-smoothing:antialiased;}
+  a{color:#1B6E5C;text-decoration:none;}
+  a:hover{color:#154F41;}
+  ::selection{background:#D9EAE4;}
+  textarea{font-family:'Instrument Sans',Arial,sans-serif;}
+  @keyframes fieldPulse{0%,100%{opacity:1}50%{opacity:.55}}
+</style>
+</helmet>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#FAFAF9"/><circle cx="100" cy="100" r="55" fill="#1B6E5C"/></svg></template>
+
+<div style="min-height:100vh;background:#FAFAF9;font-family:'Instrument Sans',Arial,sans-serif;color:#18181B;">
+
+  <div style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,40px);height:56px;background:rgba(250,250,249,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #ECEAE6;overflow-x:auto;">
+    <a href="#top" style="display:flex;align-items:center;gap:8px;font-family:'Instrument Sans',Arial,sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.01em;flex:none;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">
+      <span style="width:7px;height:7px;border-radius:50%;background:#1B6E5C;flex:none;"></span>
+      <span style="color:#18181B;">Field</span><span style="color:#A3A19C;font-weight:500;font-size:0.75em;">by WhatBit</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:22px;flex:none;">
+      <a href="#browser" style="font-size:12.5px;font-weight:600;color:#57554F;" style-hover="color:#18181B;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Browser</a>
+      <a href="#detail" style="font-size:12.5px;font-weight:600;color:#57554F;" style-hover="color:#18181B;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Detail</a>
+      <a href="#personalise" style="font-size:12.5px;font-weight:600;color:#57554F;" style-hover="color:#18181B;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Personalise</a>
+      <a href="#output" style="font-size:12.5px;font-weight:600;color:#57554F;" style-hover="color:#18181B;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Output</a>
+      <a href="#profile" style="font-size:12.5px;font-weight:600;color:#57554F;" style-hover="color:#18181B;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Intake/Profile</a>
+      <a href="#paywall" style="font-size:12.5px;font-weight:600;color:#57554F;" style-hover="color:#18181B;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Upgrade</a>
+      <a href="#errors" style="font-size:12.5px;font-weight:600;color:#57554F;" style-hover="color:#18181B;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Errors</a>
+    </div>
+  </div>
+  <div id="top"></div>
+
+  <!-- ============ SECTION 1: STRATEGY BROWSER ============ -->
+  <div id="browser" style="padding:120px clamp(20px,5vw,56px) 96px;max-width:1040px;margin:0 auto;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#1B6E5C;font-weight:500;margin-bottom:16px;">01 &middot; STRATEGY BROWSER</div>
+    <div style="font-weight:700;font-size:clamp(26px,3.4vw,34px);letter-spacing:-0.015em;margin-bottom:10px;line-height:1.15;">Browse by behaviour function.</div>
+    <div style="font-size:15px;color:#6B6B70;margin-bottom:40px;max-width:560px;line-height:1.6;">Responsive strategies live in their own tab &mdash; they never mix into the function filter.</div>
+
+    <div style="display:flex;gap:28px;border-bottom:1px solid #ECEAE6;margin-bottom:28px;">
+      <div style="padding-bottom:12px;font-size:14.5px;font-weight:700;color:#18181B;border-bottom:2px solid #1B6E5C;">By function</div>
+      <div tabindex="0" style="padding-bottom:12px;font-size:14.5px;font-weight:600;color:#A3A19C;" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">Responsive strategies</div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;margin-bottom:28px;">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="padding:6px 13px;border-radius:7px;background:#18181B;color:#FFFFFF;font-size:12.5px;font-weight:600;">Attention</span>
+        <span style="padding:6px 13px;border-radius:7px;background:#18181B;color:#FFFFFF;font-size:12.5px;font-weight:600;">Escape/avoidance</span>
+        <span tabindex="0" style="padding:6px 13px;border-radius:7px;background:#FFFFFF;border:1px solid #E7E5E2;color:#57554F;font-size:12.5px;font-weight:600;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Sensory</span>
+        <span tabindex="0" style="padding:6px 13px;border-radius:7px;background:#FFFFFF;border:1px solid #E7E5E2;color:#57554F;font-size:12.5px;font-weight:600;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Access to tangibles</span>
+        <span tabindex="0" style="padding:6px 13px;border-radius:7px;background:#FFFFFF;border:1px solid #E7E5E2;color:#57554F;font-size:12.5px;font-weight:600;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Communication</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#A3A19C;font-weight:500;letter-spacing:0.06em;margin-right:2px;">EVIDENCE</span>
+        <span style="padding:5px 12px;border-radius:20px;background:#1B6E5C;color:#FFFFFF;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;">Strong</span>
+        <span tabindex="0" style="padding:5px 12px;border-radius:20px;color:#57554F;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Emerging</span>
+        <span tabindex="0" style="padding:5px 12px;border-radius:20px;color:#57554F;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Practice-based</span>
+      </div>
+    </div>
+
+    <!-- Superseded — unmissable full-bleed band -->
+    <div style="background:#18181B;color:#FFFFFF;border-radius:14px;padding:16px 22px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-bottom:14px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.05em;">SUPERSEDED &mdash; UPDATED GUIDANCE AVAILABLE</div>
+      <div style="display:flex;gap:22px;margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:12px;">
+        <span style="opacity:0.5;text-decoration:line-through;">Previous 61%</span>
+        <span style="font-weight:600;color:#5FD9AE;">Updated 34%</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="background:#FFFFFF;border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+        <div style="max-width:600px;">
+          <div style="font-weight:700;font-size:17px;margin-bottom:5px;">Functional communication training (FCT)</div>
+          <div style="font-size:13.5px;color:#6B6B70;line-height:1.55;">Teaches a replacement communication response that accesses the same reinforcer as the behaviour of concern.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;flex:none;padding-top:2px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#1B6E5C;">Strong evidence</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#A3A19C;">Attention</span>
+        </div>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+        <div style="max-width:600px;">
+          <div style="font-weight:700;font-size:17px;margin-bottom:5px;">Non-contingent reinforcement (NCR)</div>
+          <div style="font-size:13.5px;color:#6B6B70;line-height:1.55;">Delivers the reinforcer on a fixed schedule, independent of behaviour, to reduce its motivating value.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;flex:none;padding-top:2px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#1B6E5C;">Strong evidence</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#A3A19C;">Attention</span>
+        </div>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+        <div style="max-width:600px;">
+          <div style="font-weight:700;font-size:17px;margin-bottom:5px;">High-probability request sequences</div>
+          <div style="font-size:13.5px;color:#6B6B70;line-height:1.55;">Builds behavioural momentum with easy requests before presenting a lower-probability demand.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;flex:none;padding-top:2px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#57554F;">Emerging evidence</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#A3A19C;">Escape/avoidance</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 2: STRATEGY DETAIL ============ -->
+  <div id="detail" style="padding:90px clamp(20px,5vw,56px);max-width:1040px;margin:0 auto;background:#F5F4F1;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#1B6E5C;font-weight:500;margin-bottom:16px;">02 &middot; STRATEGY DETAIL</div>
+    <div style="font-weight:700;font-size:clamp(26px,3.4vw,34px);letter-spacing:-0.015em;margin-bottom:10px;">Mechanism and citation, always in view.</div>
+    <div style="font-size:15px;color:#6B6B70;margin-bottom:40px;max-width:560px;line-height:1.6;">Never behind a collapsed section.</div>
+
+    <div style="background:#FFFFFF;border-radius:16px;padding:clamp(24px,4vw,36px);max-width:760px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 8px 20px rgba(24,24,27,0.05);">
+      <div style="display:flex;gap:12px;margin-bottom:16px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#1B6E5C;">Strong evidence</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#A3A19C;">Attention</span>
+      </div>
+      <div style="font-weight:700;font-size:24px;letter-spacing:-0.01em;margin-bottom:24px;">Non-contingent reinforcement (NCR)</div>
+
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#A3A19C;font-weight:500;margin-bottom:8px;">MECHANISM</div>
+        <div style="font-size:15px;color:#33322E;line-height:1.7;">Delivers the identified reinforcer on a time-based schedule, unrelated to the target behaviour. As motivation for the reinforcer decreases through satiation, the behaviour that used to earn it loses value &mdash; without needing to withhold the reinforcer contingently.</div>
+      </div>
+
+      <!-- signature mechanism + citation unit -->
+      <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:12px;padding:18px 20px;margin:24px 0;box-shadow:0 4px 14px rgba(27,110,92,0.08);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION &middot; PERMANENT SOURCE</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#33322E;line-height:1.6;">Tucker, M., Sigafoos, J., &amp; Bushell, H. (1998). Comprehensive review of self-injurious behavior treated with noncontingent reinforcement. Behavior Modification, 22(4), 529&ndash;547.</div>
+      </div>
+
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#A3A19C;font-weight:500;margin-bottom:10px;">HOW TO USE</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:14.5px;color:#33322E;line-height:1.6;">
+          <div>1. Identify the reinforcer maintaining the behaviour from FBA data.</div>
+          <div>2. Set an initial schedule denser than the natural rate of the behaviour.</div>
+          <div>3. Deliver on schedule regardless of behaviour; thin the schedule as responding stabilises.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 3: PERSONALISATION FLOW ============ -->
+  <div id="personalise" style="padding:90px clamp(20px,5vw,56px);max-width:1040px;margin:0 auto;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#1B6E5C;font-weight:500;margin-bottom:16px;">03 &middot; PERSONALISATION FLOW</div>
+    <div style="font-weight:700;font-size:clamp(26px,3.4vw,34px);letter-spacing:-0.015em;margin-bottom:10px;">A draft to review, never the final word.</div>
+    <div style="font-size:15px;color:#6B6B70;margin-bottom:48px;max-width:600px;line-height:1.6;">Capacity note, then an optional AI draft, then a review step that's always editable before saving. Click Generate draft to see the reveal.</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:32px;margin-bottom:48px;">
+      <div style="background:#FFFFFF;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;color:#A3A19C;margin-bottom:10px;">STEP 1</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:10px;">Capacity note</div>
+        <div style="font-size:13.5px;color:#6B6B70;line-height:1.55;margin-bottom:14px;">What's realistic for this participant and setting?</div>
+        <div style="font-size:13.5px;color:#33322E;line-height:1.55;background:#F5F4F1;border-radius:8px;padding:12px 14px;">Support worker present most shifts; can deliver reinforcement on a timer but not track duration data reliably yet.</div>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;color:#A3A19C;margin-bottom:10px;">STEP 2</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:10px;">AI-generate</div>
+        <div style="font-size:13.5px;color:#6B6B70;line-height:1.55;margin-bottom:18px;">Uses the participant's profile and this capacity note to draft personalised wording.</div>
+        <button onClick="{{ onGenerate }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:8px;background:#1B6E5C;color:#FFFFFF;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;transition:background 100ms ease,transform 100ms ease;" style-hover="background:#154F41;" style-active="transform:scale(0.97);" style-focus="outline:2px solid #1B6E5C;outline-offset:3px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:0.05em;background:rgba(255,255,255,0.2);padding:2px 6px;border-radius:4px;">AI</span>
+          {{ generateLabel }}
+        </button>
+      </div>
+
+      <div style="background:#F5F4F1;border-radius:14px;padding:22px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;color:#A3A19C;margin-bottom:10px;">SOMETIMES</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:10px;color:#57554F;">AI unavailable</div>
+        <div style="font-size:13.5px;color:#6B6B70;line-height:1.55;margin-bottom:14px;">This participant's profile is missing information the draft needs: daily routine and communication method.</div>
+        <a href="#profile" style="font-size:13.5px;font-weight:700;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Add these to the profile &rarr;</a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,300px);gap:28px;align-items:start;">
+      <div style="background:#F5F4F1;border-radius:16px;padding:26px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);">
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Review &mdash; always editable</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#57554F;margin-bottom:16px;">Draft &middot; review before saving</div>
+        <sc-if value="{{ revealed }}" hint-placeholder-val="{{ false }}">
+          <textarea style="width:100%;min-height:130px;border:1px solid #E7E5E2;border-radius:10px;padding:14px;font-size:14.5px;line-height:1.65;color:#33322E;resize:vertical;box-sizing:border-box;background:#FFFFFF;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;border-color:transparent;">Deliver a preferred sensory item (fidget toy) on a 10-minute fixed schedule during support shifts, independent of behaviour. Given limited data tracking capacity, start with the timer method rather than a data sheet, and increase the interval by 2 minutes each week responding is stable.</textarea>
+          <div style="display:flex;gap:14px;margin-top:16px;">
+            <button style="padding:9px 18px;border-radius:8px;background:#18181B;color:#FFFFFF;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Save to plan</button>
+            <button onClick="{{ onReset }}" style="padding:9px 18px;border-radius:8px;background:transparent;color:#57554F;font-size:13.5px;font-weight:600;border:1px solid #E7E5E2;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Regenerate</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notRevealed }}" hint-placeholder-val="{{ true }}">
+          <div style="min-height:130px;border:1.5px dashed #D8D5D0;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#A3A19C;font-size:13.5px;">Draft will appear here</div>
+        </sc-if>
+      </div>
+      <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:14px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,110,92,0.08);{{ mechStyle }}">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#1B6E5C;font-weight:600;margin-bottom:10px;">MECHANISM</div>
+        <div style="font-size:13px;color:#33322E;line-height:1.6;margin-bottom:16px;">Reduces motivating value of the reinforcer via satiation, independent of behaviour.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#33322E;line-height:1.5;">Tucker et al. (1998). Behavior Modification, 22(4), 529&ndash;547.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 4: OUTPUT VIEW ============ -->
+  <div id="output" style="padding:90px clamp(20px,5vw,56px);max-width:1040px;margin:0 auto;background:#F5F4F1;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#1B6E5C;font-weight:500;margin-bottom:16px;">04 &middot; OUTPUT VIEW</div>
+    <div style="font-weight:700;font-size:clamp(26px,3.4vw,34px);letter-spacing:-0.015em;margin-bottom:10px;">Plan wording, or session-log wording.</div>
+    <div style="font-size:15px;color:#6B6B70;margin-bottom:40px;max-width:600px;line-height:1.6;">Mechanism and citation stay pinned alongside either way.</div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,280px);gap:28px;align-items:start;">
+      <div style="background:#FFFFFF;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <div style="display:inline-flex;background:#F5F4F1;border-radius:9px;padding:4px;">
+            <span tabindex="0" style="padding:7px 14px;font-size:13px;font-weight:600;background:#18181B;color:#FFFFFF;border-radius:6px;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Plan format</span>
+            <span tabindex="0" style="padding:7px 14px;font-size:13px;font-weight:600;color:#57554F;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Session-log format</span>
+          </div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#1B6E5C;">Generated draft &middot; edited</span>
+        </div>
+        <div style="font-size:16px;color:#33322E;line-height:1.75;">Deliver a preferred sensory item (fidget toy) on a fixed 10-minute schedule throughout support shifts, independent of behaviour. Increase the interval by 2 minutes weekly once responding is stable. Track using the shift timer rather than a data sheet, given current recording capacity.</div>
+      </div>
+      <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:14px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,110,92,0.08);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#1B6E5C;font-weight:600;margin-bottom:10px;">MECHANISM</div>
+        <div style="font-size:13px;color:#33322E;line-height:1.6;margin-bottom:16px;">Reduces motivating value of the reinforcer via satiation, independent of behaviour.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#33322E;line-height:1.5;">Tucker et al. (1998). Behavior Modification, 22(4), 529&ndash;547.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 5: INTAKE vs PROFILE ============ -->
+  <div id="profile" style="padding:90px clamp(20px,5vw,56px);max-width:1040px;margin:0 auto;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#1B6E5C;font-weight:500;margin-bottom:16px;">05 &middot; INTAKE VS. PROFILE</div>
+    <div style="font-weight:700;font-size:clamp(26px,3.4vw,34px);letter-spacing:-0.015em;margin-bottom:10px;">Same data, two framings.</div>
+    <div style="font-size:15px;color:#6B6B70;margin-bottom:48px;max-width:640px;line-height:1.6;">Standalone practitioners fill this in by hand. Suite-connected practitioners see it as pulled data, not a form.</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
+      <div style="background:#FFFFFF;border-radius:16px;padding:26px;box-shadow:0 1px 2px rgba(24,24,27,0.03),0 4px 10px rgba(24,24,27,0.03);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;color:#A3A19C;margin-bottom:22px;">STANDALONE &mdash; INTAKE FORM</div>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div><div style="font-size:12px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Preferred name</div><div style="border:1px solid #E7E5E2;border-radius:8px;padding:9px 12px;font-size:14.5px;">Jordan</div></div>
+          <div><div style="font-size:12px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Communication method</div><div style="border:1px solid #E7E5E2;border-radius:8px;padding:9px 12px;font-size:14.5px;">Key word signing + AAC device</div></div>
+          <div><div style="font-size:12px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Daily routine notes</div><div style="border:1px solid #E7E5E2;border-radius:8px;padding:9px 12px;font-size:14.5px;color:#C7C4BE;">Add routine details&hellip;</div></div>
+        </div>
+        <button style="margin-top:20px;padding:9px 18px;border-radius:8px;background:#18181B;color:#FFFFFF;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Save profile</button>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:16px;padding:26px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 8px 20px rgba(27,110,92,0.06);border:1px solid #D9EAE4;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;color:#1B6E5C;">SUITE-CONNECTED &mdash; PROFILE SUMMARY</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;color:#1B6E5C;">Pulled from Frame &middot; synced 2h ago</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div><div style="font-size:12px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Preferred name</div><div style="font-size:14.5px;color:#33322E;">Jordan</div></div>
+          <div><div style="font-size:12px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Communication method</div><div style="font-size:14.5px;color:#33322E;">Key word signing + AAC device</div></div>
+          <div><div style="font-size:12px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Daily routine notes</div><div style="font-size:14.5px;color:#33322E;">Structured morning routine, 1:1 support 8&ndash;11am</div></div>
+        </div>
+        <div style="margin-top:20px;font-size:13px;color:#6B6B70;">Read-only here &mdash; edit this in Frame to update everywhere.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 6: PAYWALL ============ -->
+  <div id="paywall" style="padding:90px clamp(20px,5vw,56px);max-width:1040px;margin:0 auto;background:#F5F4F1;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#1B6E5C;font-weight:500;margin-bottom:16px;">06 &middot; UPGRADE MOMENT</div>
+    <div style="font-weight:700;font-size:clamp(26px,3.4vw,34px);letter-spacing:-0.015em;margin-bottom:10px;">Evidence stays open. Drafting is Pro.</div>
+    <div style="font-size:15px;color:#6B6B70;margin-bottom:48px;max-width:640px;line-height:1.6;">The exact moment a Free user hits Generate draft.</div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,280px);gap:28px;align-items:start;">
+      <div style="background:#FFFFFF;border-radius:16px;padding:28px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#A3A19C;letter-spacing:0.05em;">FREE PLAN</span>
+          <span style="font-size:14.5px;font-weight:700;color:#33322E;">Non-contingent reinforcement (NCR)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:24px;max-width:420px;">
+          <div style="height:11px;width:92%;background:#F0EEEA;border-radius:3px;"></div>
+          <div style="height:11px;width:100%;background:#F0EEEA;border-radius:3px;"></div>
+          <div style="height:11px;width:70%;background:#F0EEEA;border-radius:3px;"></div>
+        </div>
+        <div style="font-weight:700;font-size:21px;letter-spacing:-0.01em;margin-bottom:10px;">Personalised drafting is a Pro feature</div>
+        <div style="font-size:14.5px;color:#6B6B70;line-height:1.65;margin-bottom:24px;max-width:480px;">Free includes the full strategy library with mechanism and citation for every entry, for up to 2 participants. Pro adds AI-personalised drafting, using your participant's own profile and capacity notes.</div>
+        <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;">
+          <button style="padding:11px 20px;border-radius:9px;background:#1B6E5C;color:#FFFFFF;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;transition:background 100ms ease;" style-hover="background:#154F41;" style-focus="outline:2px solid #18181B;outline-offset:2px;">Start 14-day free trial</button>
+          <span style="font-size:12.5px;color:#6B6B70;">$29/mo or $290/yr &middot; no card required for trial</span>
+        </div>
+      </div>
+      <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:14px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,110,92,0.08);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#1B6E5C;font-weight:600;margin-bottom:10px;">MECHANISM &middot; UNLOCKED</div>
+        <div style="font-size:13px;color:#33322E;line-height:1.6;margin-bottom:16px;">Reduces motivating value of the reinforcer via satiation, independent of behaviour.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION &middot; UNLOCKED</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#33322E;line-height:1.5;">Tucker et al. (1998). Behavior Modification, 22(4), 529&ndash;547.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 7: ERROR STATES ============ -->
+  <div id="errors" style="padding:90px clamp(20px,5vw,56px) 130px;max-width:1040px;margin:0 auto;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#1B6E5C;font-weight:500;margin-bottom:16px;">07 &middot; ERROR STATES</div>
+    <div style="font-weight:700;font-size:clamp(26px,3.4vw,34px);letter-spacing:-0.015em;margin-bottom:10px;">Three problems, three honest messages.</div>
+    <div style="font-size:15px;color:#6B6B70;margin-bottom:40px;max-width:600px;line-height:1.6;">A refusal is not the same problem as a dropped connection.</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
+      <div style="background:#FFFFFF;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:0.05em;color:#A3A19C;margin-bottom:12px;">CONTENT REVIEW &mdash; NOT A BUG</div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:10px;">Draft couldn't be generated</div>
+        <div style="font-size:13.5px;color:#33322E;line-height:1.6;margin-bottom:18px;">Our content policy blocked this draft, most likely from wording in the capacity note. This isn't a technical fault, and nothing you entered was sent anywhere else. Try rephrasing the note, or write this entry manually.</div>
+        <button style="padding:8px 14px;border-radius:7px;background:transparent;border:1px solid #E7E5E2;color:#18181B;font-size:13px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Edit capacity note</button>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:0.05em;color:#A3A19C;margin-bottom:12px;">CONNECTION ISSUE</div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:10px;">Couldn't reach Field</div>
+        <div style="font-size:13.5px;color:#33322E;line-height:1.6;margin-bottom:18px;">Your connection dropped before the draft came back. Nothing was generated or charged. Your capacity note is still here &mdash; check your connection and try again.</div>
+        <button style="padding:8px 14px;border-radius:7px;background:#18181B;color:#FFFFFF;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Retry</button>
+      </div>
+
+      <div style="background:#FFFFFF;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:0.05em;color:#A3A19C;margin-bottom:12px;">SERVICE ISSUE, OUR SIDE</div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:10px;">Something went wrong on our end</div>
+        <div style="font-size:13.5px;color:#33322E;line-height:1.6;margin-bottom:18px;">The drafting service didn't respond. Your capacity note and profile data are unaffected. If this keeps happening, the strategy library and citations still work &mdash; you can write the entry manually in the meantime.</div>
+        <button style="padding:8px 14px;border-radius:7px;background:#18181B;color:#FFFFFF;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;" style-focus="outline:2px solid #1B6E5C;outline-offset:2px;">Retry</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:28px clamp(20px,5vw,56px);text-align:center;font-size:12px;color:#A3A19C;border-top:1px solid #ECEAE6;">Field by WhatBit &middot; Australia</div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { revealed: false, reducedMotion: false };
+
+  componentDidMount() {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.setState({ reducedMotion: mq.matches });
+  }
+
+  renderVals() {
+    const dur = this.state.reducedMotion ? '1ms' : '220ms';
+    const ease = this.state.reducedMotion ? 'linear' : 'cubic-bezier(0.34,1.56,0.64,1)';
+    return {
+      revealed: this.state.revealed,
+      notRevealed: !this.state.revealed,
+      generateLabel: this.state.revealed ? 'Regenerate draft' : 'Generate draft',
+      onGenerate: () => this.setState({ revealed: true }),
+      onReset: () => this.setState({ revealed: false }),
+      mechStyle: `transition:transform ${dur} ${ease}`,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
