@@ -4,19 +4,19 @@ const COPY: Record<
   PersonaliseErrorKind,
   { eyebrow: string; title: string; body: string; retryLabel: string; solid: boolean }
 > = {
-  'content-policy': {
-    eyebrow: 'CONTENT REVIEW — NOT A BUG',
-    title: "Draft couldn't be generated",
+  'no-variant-match': {
+    eyebrow: 'NOT WRITTEN YET — NOT A BUG',
+    title: 'No personalised variant for this strategy yet',
     body:
-      "Our content policy blocked this draft, most likely from wording in the capacity note. This isn't a technical fault, and nothing you entered was sent anywhere else. Try rephrasing the note, or write this entry manually.",
-    retryLabel: 'Edit capacity note',
+      "No pre-authored variant exists for this strategy yet — this is expected while content is still being written, not a technical fault. The mechanism and citation are unaffected; you can write this entry manually in the meantime.",
+    retryLabel: 'Write manually',
     solid: false,
   },
   network: {
     eyebrow: 'CONNECTION ISSUE',
     title: "Couldn't reach Field",
     body:
-      'Your connection dropped before the draft came back. Nothing was generated or charged. Your capacity note is still here — check your connection and try again.',
+      'Your connection dropped before the match came back. Nothing was changed or charged. Your capacity note is still here — check your connection and try again.',
     retryLabel: 'Retry',
     solid: true,
   },
@@ -24,7 +24,7 @@ const COPY: Record<
     eyebrow: 'SERVICE ISSUE, OUR SIDE',
     title: 'Something went wrong on our end',
     body:
-      "The drafting service didn't respond. Your capacity note and profile data are unaffected. If this keeps happening, the strategy library and citations still work — you can write the entry manually in the meantime.",
+      "The matching step didn't respond. Your capacity note and profile data are unaffected. If this keeps happening, the strategy library and citations still work — you can write the entry manually in the meantime.",
     retryLabel: 'Retry',
     solid: true,
   },
@@ -44,7 +44,7 @@ export function PersonaliseErrorCard({
         {copy.eyebrow}
       </div>
       <div className="font-bold text-base mb-2.5">{copy.title}</div>
-      <p className="text-[13.5px] text-ink-soft leading-relaxed mb-4.5">{copy.body}</p>
+      <p className="text-[13.5px] text-ink-soft leading-relaxed mb-[18px]">{copy.body}</p>
       <button
         type="button"
         onClick={onRetry}

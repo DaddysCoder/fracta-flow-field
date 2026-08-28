@@ -1,5 +1,10 @@
 import type { Strategy } from './types';
 
+// NOTE: every `variants` array below is PLACEHOLDER CONTENT — two starter
+// variants per strategy so the local matching logic in `src/ai/personalise.ts`
+// has something real to score and fill. The actual variant wording is a
+// content-authoring task, not a coding one; replace these before launch.
+
 export const STRATEGIES: Strategy[] = [
   {
     id: 'fct',
@@ -18,6 +23,22 @@ export const STRATEGIES: Strategy[] = [
       'Identify the maintaining reinforcer from FBA data.',
       'Select a communication response the participant can already produce, or can quickly learn.',
       'Reinforce every instance of the new response; place the old behaviour on extinction where safe to do so.',
+    ],
+    variants: [
+      {
+        id: 'fct-aac',
+        strategyId: 'fct',
+        template:
+          'Teach a request for attention using {{communicationMethod}}, modelled immediately before the natural opportunity within {{routine}}.',
+        tags: { communicationMethod: ['aac', 'device', 'pecs'] },
+      },
+      {
+        id: 'fct-verbal',
+        strategyId: 'fct',
+        template:
+          'Teach a simple verbal or gestural request for attention, practised during {{routine}} where attention-seeking is most likely.',
+        tags: { communicationMethod: ['verbal', 'speech'] },
+      },
     ],
   },
   {
@@ -42,6 +63,22 @@ export const STRATEGIES: Strategy[] = [
       previousFigure: 'Previous 61%',
       updatedFigure: 'Updated 34%',
     },
+    variants: [
+      {
+        id: 'ncr-timer-slow',
+        strategyId: 'ncr',
+        template:
+          'Deliver a preferred {{interest}} item on a fixed timer during {{routine}}, starting with a longer interval given their current pace.',
+        tags: { interests: ['fidget', 'sensory'], comfortThreshold: 'low' },
+      },
+      {
+        id: 'ncr-timer-standard',
+        strategyId: 'ncr',
+        template:
+          'Deliver a preferred {{interest}} item on a fixed 10-minute schedule throughout {{routine}}, independent of behaviour.',
+        tags: { comfortThreshold: 'medium' },
+      },
+    ],
   },
   {
     id: 'high-prob',
@@ -60,6 +97,22 @@ export const STRATEGIES: Strategy[] = [
       'Build a set of 2–3 high-probability requests specific to the participant.',
       'Deliver them in quick succession, reinforcing each compliance.',
       'Present the target (low-probability) request immediately after.',
+    ],
+    variants: [
+      {
+        id: 'high-prob-gentle',
+        strategyId: 'high-prob',
+        template:
+          'Open with two or three easy, preferred requests tied to {{interest}} before the harder ask during {{routine}} — keep pacing slow.',
+        tags: { comfortThreshold: 'low' },
+      },
+      {
+        id: 'high-prob-standard',
+        strategyId: 'high-prob',
+        template:
+          'Deliver 2–3 high-probability requests in quick succession, reinforcing each, immediately before the target request within {{routine}}.',
+        tags: { comfortThreshold: 'medium' },
+      },
     ],
   },
   {
@@ -80,6 +133,21 @@ export const STRATEGIES: Strategy[] = [
       'Schedule brief access at fixed points across the day.',
       'Fade prompting as the participant begins to request access independently.',
     ],
+    variants: [
+      {
+        id: 'sensory-water',
+        strategyId: 'sensory-diet',
+        template: 'Schedule brief {{interest}} access at set points within {{routine}}.',
+        tags: { interests: ['water', 'sensory'] },
+      },
+      {
+        id: 'sensory-general',
+        strategyId: 'sensory-diet',
+        template:
+          'Offer a short, preferred sensory activity at fixed points during {{routine}}, fading prompts as independence grows.',
+        tags: {},
+      },
+    ],
   },
   {
     id: 'choice-tangibles',
@@ -98,6 +166,22 @@ export const STRATEGIES: Strategy[] = [
       'Identify 2–3 comparably preferred items ahead of time.',
       'Present the choice at the same transition point each time.',
       'Honour the choice immediately and consistently.',
+    ],
+    variants: [
+      {
+        id: 'choice-interest-led',
+        strategyId: 'choice-tangibles',
+        template:
+          'Offer a choice between two {{interest}}-related items at each transition within {{routine}}.',
+        tags: { interests: ['toy', 'game', 'trains'] },
+      },
+      {
+        id: 'choice-general',
+        strategyId: 'choice-tangibles',
+        template:
+          'Present a structured choice of 2–3 pre-agreed items at the same transition point during {{routine}}.',
+        tags: {},
+      },
     ],
   },
   {
@@ -118,6 +202,22 @@ export const STRATEGIES: Strategy[] = [
       'Model the request exchange immediately before the natural opportunity.',
       'Reinforce every independent exchange; prompt only when needed.',
     ],
+    variants: [
+      {
+        id: 'aac-device',
+        strategyId: 'aac-request',
+        template:
+          'Model a request exchange on their {{communicationMethod}} for {{interest}}, immediately before the natural opportunity.',
+        tags: { communicationMethod: ['device', 'aac'] },
+      },
+      {
+        id: 'aac-signing',
+        strategyId: 'aac-request',
+        template:
+          'Model the sign or gesture for {{interest}} using {{communicationMethod}}, prompting only as needed.',
+        tags: { communicationMethod: ['sign', 'signing'] },
+      },
+    ],
   },
   {
     id: 'redirect',
@@ -137,6 +237,22 @@ export const STRATEGIES: Strategy[] = [
       'Have the redirection activity ready and accessible in the setting.',
       'Redirect calmly and briefly; do not narrate the behaviour being avoided.',
     ],
+    variants: [
+      {
+        id: 'redirect-low',
+        strategyId: 'redirect',
+        template:
+          'At the earliest precursor, redirect calmly to {{interest}} — keep the offer low-demand given their current pace.',
+        tags: { comfortThreshold: 'low' },
+      },
+      {
+        id: 'redirect-standard',
+        strategyId: 'redirect',
+        template:
+          'At the earliest precursor, redirect briefly to a preferred {{interest}} activity without narrating the behaviour being avoided.',
+        tags: { comfortThreshold: 'medium' },
+      },
+    ],
   },
   {
     id: 'debrief',
@@ -155,6 +271,22 @@ export const STRATEGIES: Strategy[] = [
       'Wait until physiological and behavioural signs indicate full de-escalation.',
       'Keep the check-in brief and low-demand.',
       'Avoid discussing the incident itself during this step.',
+    ],
+    variants: [
+      {
+        id: 'debrief-aac',
+        strategyId: 'debrief',
+        template:
+          'Once fully settled, offer a brief, calm check-in using {{communicationMethod}} — no discussion of the incident.',
+        tags: { communicationMethod: ['aac', 'device', 'sign'] },
+      },
+      {
+        id: 'debrief-general',
+        strategyId: 'debrief',
+        template:
+          'Once fully settled, offer a brief, low-demand check-in — keep it short and avoid discussing the incident.',
+        tags: {},
+      },
     ],
   },
 ];

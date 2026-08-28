@@ -7,6 +7,8 @@ const DEMO_STANDALONE: ParticipantProfile = {
   preferredName: 'Jordan',
   communicationMethod: '',
   dailyRoutineNotes: '',
+  interests: '',
+  comfortThreshold: '',
 };
 
 const DEMO_SUITE_CONNECTED: ParticipantProfile = {
@@ -14,6 +16,8 @@ const DEMO_SUITE_CONNECTED: ParticipantProfile = {
   preferredName: 'Jordan',
   communicationMethod: 'Key word signing + AAC device',
   dailyRoutineNotes: 'Structured morning routine, 1:1 support 8–11am',
+  interests: 'Trains, fidget toys, water play',
+  comfortThreshold: 'Tolerates one new routine change per week',
   source: {
     suite: 'Frame',
     syncedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),

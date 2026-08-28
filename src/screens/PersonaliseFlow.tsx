@@ -9,7 +9,7 @@ import { loadProfile } from '../lib/participant-profile/storage';
 import { isSuiteConnected } from '../lib/participant-profile/suite-detection';
 import { missingPersonalisationFields } from '../lib/participant-profile/types';
 import {
-  requestPersonalisedDraft,
+  requestPersonalisedVariant,
   type PersonaliseErrorKind,
   type PersonaliseSimulation,
   PersonaliseError,
@@ -69,7 +69,11 @@ export function PersonaliseFlow() {
     }
     setState({ status: 'loading' });
     try {
-      const draftText = await requestPersonalisedDraft(strategy!, capacityNote, profile, simulate);
+      const draftText = requestPersonalisedVariant(
+        strategy!,
+        profile,
+        import.meta.env.DEV ? simulate : undefined,
+      );
       setState({ status: 'revealed', draftText });
     } catch (err) {
       if (err instanceof PersonaliseError) {
@@ -90,7 +94,7 @@ export function PersonaliseFlow() {
     navigate(`/strategy/${id}/output`);
   }
 
-  const generateLabel = state.status === 'revealed' ? 'Regenerate draft' : 'Generate draft';
+  const generateLabel = state.status === 'revealed' ? 'Re-match variant' : 'Match variant';
   const revealDuration = reducedMotion ? '1ms' : '220ms';
 
   return (
@@ -126,10 +130,10 @@ export function PersonaliseFlow() {
           <div className="font-mono text-[11px] font-semibold tracking-wide text-tertiary mb-2.5">
             STEP 2
           </div>
-          <div className="font-bold text-[15px] mb-2.5">AI-generate</div>
+          <div className="font-bold text-[15px] mb-2.5">Match variant</div>
           <p className="text-[13.5px] text-secondary leading-snug mb-4.5">
-            Uses the participant&apos;s profile and this capacity note to draft personalised
-            wording.
+            Matches the participant&apos;s profile against pre-authored variants for this strategy
+            and fills in the winning one — no model writes new text.
           </p>
           {missingFields.length === 0 ? (
             <>
@@ -139,24 +143,26 @@ export function PersonaliseFlow() {
                 disabled={state.status === 'loading'}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-btn bg-accent text-white text-[13.5px] font-semibold focus-ring hover:bg-accent-hover active:scale-[0.97] transition-all duration-100 disabled:opacity-60"
               >
-                <span className="font-mono text-[9px] font-semibold tracking-wide bg-white/20 px-1.5 py-0.5 rounded">
-                  AI
-                </span>
-                {state.status === 'loading' ? 'Generating…' : generateLabel}
+                {state.status === 'loading' ? 'Matching…' : generateLabel}
               </button>
-              <div className="mt-3 flex items-center gap-2 text-[11px] text-tertiary">
-                <span>Simulate:</span>
-                <select
-                  value={simulate}
-                  onChange={(e) => setSimulate(e.target.value as PersonaliseSimulation)}
-                  className="border border-border rounded px-1.5 py-1 text-[11px] focus-ring"
-                >
-                  <option value="success">Success</option>
-                  <option value="content-policy">Content policy refusal</option>
-                  <option value="network">Network drop</option>
-                  <option value="service">Service issue</option>
-                </select>
-              </div>
+              {import.meta.env.DEV && (
+                <div className="mt-3 flex items-center gap-2 text-[11px] text-tertiary border border-dashed border-amber-400 rounded-lg px-2 py-1.5 bg-amber-50/50 w-fit">
+                  <span className="font-mono text-[9px] font-bold tracking-wide text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
+                    DEV
+                  </span>
+                  <span>Simulate:</span>
+                  <select
+                    value={simulate}
+                    onChange={(e) => setSimulate(e.target.value as PersonaliseSimulation)}
+                    className="border border-border rounded px-1.5 py-1 text-[11px] focus-ring bg-white"
+                  >
+                    <option value="success">Success (real matching)</option>
+                    <option value="no-variant-match">No variant authored yet</option>
+                    <option value="network">Network drop</option>
+                    <option value="service">Service issue</option>
+                  </select>
+                </div>
+              )}
             </>
           ) : (
             <div className="bg-surface rounded-lg p-3.5">
@@ -213,7 +219,7 @@ export function PersonaliseFlow() {
                     onClick={handleGenerate}
                     className="px-[18px] py-2.5 rounded-btn bg-transparent border border-border text-muted text-[13.5px] font-semibold focus-ring"
                   >
-                    Regenerate
+                    Re-match
                   </button>
                 </div>
               </div>
@@ -221,7 +227,7 @@ export function PersonaliseFlow() {
 
             {(state.status === 'idle' || state.status === 'loading') && (
               <div className="min-h-[130px] border-[1.5px] border-dashed border-[#D8D5D0] rounded-[10px] flex items-center justify-center text-tertiary text-[13.5px]">
-                {state.status === 'loading' ? 'Generating…' : 'Draft will appear here'}
+                {state.status === 'loading' ? 'Matching…' : 'Matched wording will appear here'}
               </div>
             )}
           </div>

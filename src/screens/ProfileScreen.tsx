@@ -65,6 +65,18 @@ export function ProfileScreen() {
               placeholder="Add routine details…"
               onChange={(v) => updateField('dailyRoutineNotes', v)}
             />
+            <Field
+              label="Interests"
+              value={profile.interests}
+              placeholder="What is this participant into?"
+              onChange={(v) => updateField('interests', v)}
+            />
+            <Field
+              label="Comfort threshold"
+              value={profile.comfortThreshold}
+              placeholder="How much change/novelty can they tolerate?"
+              onChange={(v) => updateField('comfortThreshold', v)}
+            />
           </div>
           <button
             type="button"
@@ -88,6 +100,8 @@ export function ProfileScreen() {
             <ReadOnlyField label="Preferred name" value={profile.preferredName} />
             <ReadOnlyField label="Communication method" value={profile.communicationMethod} />
             <ReadOnlyField label="Daily routine notes" value={profile.dailyRoutineNotes} />
+            <ReadOnlyField label="Interests" value={profile.interests} />
+            <ReadOnlyField label="Comfort threshold" value={profile.comfortThreshold} />
           </div>
           <div className="mt-5 text-[13px] text-secondary">
             Read-only here &mdash; edit this in Frame to update everywhere.
