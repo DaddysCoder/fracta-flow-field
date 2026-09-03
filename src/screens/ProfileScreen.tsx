@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { loadProfile, saveProfile } from '../lib/participant-profile/storage';
 import { isSuiteConnected, setSuiteConnected } from '../lib/participant-profile/suite-detection';
 import type { ParticipantProfile } from '../lib/participant-profile/types';
+import { ProfessionalToolDisclaimer } from '../components/ProfessionalToolDisclaimer';
 
 function timeAgo(iso: string): string {
   const ms = Date.now() - new Date(iso).getTime();
@@ -40,6 +41,7 @@ export function ProfileScreen() {
         Standalone practitioners fill this in by hand. Suite-connected practitioners see it as
         pulled data, not a form.
       </p>
+      <ProfessionalToolDisclaimer className="mb-6 max-w-[560px]" />
 
       <label className="flex items-center gap-2 text-[13px] text-muted mb-10">
         <input type="checkbox" checked={suiteConnected} onChange={toggleSuite} />

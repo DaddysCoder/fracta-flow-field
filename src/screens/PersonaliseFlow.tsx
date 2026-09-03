@@ -15,6 +15,7 @@ import {
   PersonaliseError,
 } from '../ai/personalise';
 import { saveDraft, loadDraft } from '../lib/strategy-library/draft-storage';
+import { ProfessionalToolDisclaimer } from '../components/ProfessionalToolDisclaimer';
 
 const DEFAULT_CAPACITY_NOTE =
   'Support worker present most shifts; can deliver reinforcement on a timer but not track duration data reliably yet.';
@@ -109,6 +110,7 @@ export function PersonaliseFlow() {
         Capacity note, then an optional matched draft, then a review step that&apos;s always editable
         before saving &mdash; for <span className="font-semibold text-ink-soft">{strategy.name}</span>.
       </p>
+      <ProfessionalToolDisclaimer className="mb-10 max-w-[600px]" />
 
       <div className="grid gap-8 mb-12" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
         <div className="bg-white rounded-card p-[22px] shadow-card">
