@@ -91,6 +91,9 @@ export function PersonaliseFlow() {
       capacityNote,
       draftText: state.draftText,
       savedAt: new Date().toISOString(),
+      templateId: strategy!.templateId,
+      templateVersion: strategy!.version,
+      participantRef: profile.id,
     });
     navigate(`/strategy/${id}/output`);
   }

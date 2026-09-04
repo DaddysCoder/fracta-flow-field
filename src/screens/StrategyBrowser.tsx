@@ -39,8 +39,8 @@ export function StrategyBrowser() {
     });
   }, [tab, selectedFunctions, tier]);
 
-  const superseded = visible.filter((s) => s.superseded);
-  const rest = visible.filter((s) => !s.superseded);
+  const superseded = visible.filter((s) => s.supersededInfo);
+  const rest = visible.filter((s) => !s.supersededInfo);
 
   return (
     <div className="px-5 sm:px-14 pt-32 pb-24 max-w-[1040px] mx-auto">
@@ -104,7 +104,7 @@ export function StrategyBrowser() {
       </div>
 
       {superseded.map((s) => (
-        <SupersededBand key={s.id} info={s.superseded!} />
+        <SupersededBand key={s.id} info={s.supersededInfo!} />
       ))}
 
       <div className="flex flex-col gap-3">

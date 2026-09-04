@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import type { Strategy } from '../lib/strategy-library/types';
+import type { StrategyTemplate } from '../lib/strategy-library/types';
 import { EvidenceBadge, FunctionTag } from './EvidenceBadge';
 
-export function StrategyCard({ strategy }: { strategy: Strategy }) {
+export function StrategyCard({ strategy }: { strategy: StrategyTemplate }) {
   return (
     <Link
       to={`/strategy/${strategy.id}`}
