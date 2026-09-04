@@ -6,9 +6,17 @@ import type { StrategyTemplate } from './types';
 // wording is a content-authoring task, not a coding one; replace these
 // before launch.
 //
-// `evidenceAuthorityTier` defaults are a mechanical mapping from the
-// existing `evidenceTier` label (Strong→1, Emerging→3, Practice-based→5)
-// pending real evidence-layer authority classification of each source.
+// `evidenceAuthorityTier` is uniformly 3 (org_procedure_current) across all
+// templates below. This is NOT a measure of research strength — that's
+// `evidenceTier` (Strong/Emerging/Practice-based), which is unrelated and
+// correct as-is. `evidenceAuthorityTier` instead grades *who this evidence
+// is authoritative for right now* (see evidence-layer's EvidenceAuthorityTier):
+// tier 1 is reserved for a specific participant's current, active plan —
+// none of these generic, org-wide templates qualify. They're all approved,
+// current, org-wide procedure templates, so tier 3 is correct for all of
+// them regardless of how strong the underlying research is. Only once
+// fracta-flow-field creates real per-participant current plans should any
+// record legitimately earn tier 1.
 // `version`/`approvalStatus`/`effectiveDate`/`current` are seeded as a
 // single approved v1 for every template — none of these have a real
 // supersession chain yet; `resolveCurrentTemplate` in `./types` is ready
@@ -22,7 +30,7 @@ export const STRATEGIES: StrategyTemplate[] = [
     shortDescription:
       'Teaches a replacement communication response that accesses the same reinforcer as the behaviour of concern.',
     evidenceTier: 'Strong',
-    evidenceAuthorityTier: 1,
+    evidenceAuthorityTier: 3,
     function: 'Attention',
     responsive: false,
     mechanism:
@@ -63,7 +71,7 @@ export const STRATEGIES: StrategyTemplate[] = [
     shortDescription:
       'Delivers the reinforcer on a fixed schedule, independent of behaviour, to reduce its motivating value.',
     evidenceTier: 'Strong',
-    evidenceAuthorityTier: 1,
+    evidenceAuthorityTier: 3,
     function: 'Attention',
     responsive: false,
     mechanism:
@@ -149,7 +157,7 @@ export const STRATEGIES: StrategyTemplate[] = [
     shortDescription:
       'Provides regular access to a preferred sensory activity to meet sensory needs proactively.',
     evidenceTier: 'Practice-based',
-    evidenceAuthorityTier: 5,
+    evidenceAuthorityTier: 3,
     function: 'Sensory',
     responsive: false,
     mechanism:
@@ -230,7 +238,7 @@ export const STRATEGIES: StrategyTemplate[] = [
     shortDescription:
       'Teaches requesting via an augmentative and alternative communication system as the primary access route.',
     evidenceTier: 'Strong',
-    evidenceAuthorityTier: 1,
+    evidenceAuthorityTier: 3,
     function: 'Communication',
     responsive: false,
     mechanism:
@@ -271,7 +279,7 @@ export const STRATEGIES: StrategyTemplate[] = [
     shortDescription:
       'Responds to early precursor behaviour by redirecting to an alternative activity, before escalation.',
     evidenceTier: 'Practice-based',
-    evidenceAuthorityTier: 5,
+    evidenceAuthorityTier: 3,
     function: 'Escape/avoidance',
     responsive: true,
     mechanism:
@@ -312,7 +320,7 @@ export const STRATEGIES: StrategyTemplate[] = [
     shortDescription:
       'A brief, low-demand check-in after an incident has fully de-escalated, to support recovery.',
     evidenceTier: 'Practice-based',
-    evidenceAuthorityTier: 5,
+    evidenceAuthorityTier: 3,
     function: 'Attention',
     responsive: true,
     mechanism:
