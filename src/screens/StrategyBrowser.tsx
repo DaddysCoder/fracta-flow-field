@@ -1,30 +1,31 @@
 import { useMemo, useState } from 'react';
 import { STRATEGIES } from '../lib/strategy-library/strategies';
-import type { BehaviourFunction, EvidenceTier } from '../lib/strategy-library/types';
+import type { EvidenceTier, StrategyCategory } from '../lib/strategy-library/types';
 import { StrategyCard } from '../components/StrategyCard';
 import { SupersededBand } from '../components/SupersededBand';
-import { EvidenceTierFilter } from '../components/EvidenceBadge';
+import { CATEGORY_LABELS, EvidenceTierFilter } from '../components/EvidenceBadge';
 
-const FUNCTIONS: BehaviourFunction[] = [
-  'Attention',
-  'Escape/avoidance',
-  'Sensory',
-  'Access to tangibles',
-  'Communication',
+const CATEGORIES: StrategyCategory[] = [
+  'environmental',
+  'community',
+  'communication',
+  'regulating',
+  'health_wellbeing',
+  'learning',
 ];
 
 export function StrategyBrowser() {
-  const [tab, setTab] = useState<'function' | 'responsive'>('function');
-  const [selectedFunctions, setSelectedFunctions] = useState<Set<BehaviourFunction>>(
+  const [tab, setTab] = useState<'category' | 'responsive'>('category');
+  const [selectedCategories, setSelectedCategories] = useState<Set<StrategyCategory>>(
     () => new Set(),
   );
   const [tier, setTier] = useState<EvidenceTier | null>(null);
 
-  function toggleFunction(fn: BehaviourFunction) {
-    setSelectedFunctions((prev) => {
+  function toggleCategory(cat: StrategyCategory) {
+    setSelectedCategories((prev) => {
       const next = new Set(prev);
-      if (next.has(fn)) next.delete(fn);
-      else next.add(fn);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
       return next;
     });
   }
@@ -32,12 +33,16 @@ export function StrategyBrowser() {
   const visible = useMemo(() => {
     return STRATEGIES.filter((s) => {
       if (tab === 'responsive' && !s.responsive) return false;
-      if (tab === 'function' && s.responsive) return false;
-      if (selectedFunctions.size > 0 && !selectedFunctions.has(s.function)) return false;
+      if (tab === 'category' && s.responsive) return false;
+      if (
+        selectedCategories.size > 0 &&
+        !s.strategyCategories.some((c) => selectedCategories.has(c))
+      )
+        return false;
       if (tier && s.evidenceTier !== tier) return false;
       return true;
     });
-  }, [tab, selectedFunctions, tier]);
+  }, [tab, selectedCategories, tier]);
 
   const superseded = visible.filter((s) => s.supersededInfo);
   const rest = visible.filter((s) => !s.supersededInfo);
@@ -48,22 +53,22 @@ export function StrategyBrowser() {
         STRATEGY LIBRARY
       </div>
       <h1 className="font-bold text-[clamp(26px,3.4vw,34px)] tracking-tight mb-2.5 leading-tight">
-        Browse by behaviour function.
+        Browse by strategy category.
       </h1>
       <p className="text-[15px] text-secondary mb-10 max-w-[560px] leading-relaxed">
-        Responsive strategies live in their own tab &mdash; they never mix into the function
-        filter.
+        Responsive strategies live in their own tab &mdash; they never mix into the category
+        filter, and personalising one requires an explicit acknowledgement first.
       </p>
 
       <div className="flex gap-7 border-b border-border-soft mb-7">
         <button
           type="button"
-          onClick={() => setTab('function')}
+          onClick={() => setTab('category')}
           className={`pb-3 text-[14.5px] font-bold focus-ring ${
-            tab === 'function' ? 'text-ink border-b-2 border-accent' : 'text-tertiary'
+            tab === 'category' ? 'text-ink border-b-2 border-accent' : 'text-tertiary'
           }`}
         >
-          By function
+          By category
         </button>
         <button
           type="button"
@@ -77,22 +82,22 @@ export function StrategyBrowser() {
       </div>
 
       <div className="flex flex-wrap justify-between gap-4 mb-7">
-        {tab === 'function' ? (
+        {tab === 'category' ? (
           <div className="flex flex-wrap gap-2">
-            {FUNCTIONS.map((fn) => {
-              const selected = selectedFunctions.has(fn);
+            {CATEGORIES.map((cat) => {
+              const selected = selectedCategories.has(cat);
               return (
                 <button
-                  key={fn}
+                  key={cat}
                   type="button"
-                  onClick={() => toggleFunction(fn)}
+                  onClick={() => toggleCategory(cat)}
                   className={`px-[13px] py-1.5 rounded-lg text-[12.5px] font-semibold focus-ring ${
                     selected
                       ? 'bg-ink text-white'
                       : 'bg-white border border-border text-muted hover:text-ink'
                   }`}
                 >
-                  {fn}
+                  {CATEGORY_LABELS[cat]}
                 </button>
               );
             })}

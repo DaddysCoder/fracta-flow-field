@@ -40,6 +40,7 @@ export function PersonaliseFlow() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [simulate, setSimulate] = useState<PersonaliseSimulation>('success');
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [responsiveAck, setResponsiveAck] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -64,6 +65,7 @@ export function PersonaliseFlow() {
   }
 
   async function handleGenerate() {
+    if (strategy!.responsive && !responsiveAck) return;
     if (plan === 'free') {
       setShowUpgrade(true);
       return;
@@ -86,6 +88,7 @@ export function PersonaliseFlow() {
   }
 
   function handleSave() {
+    if (strategy!.responsive && !responsiveAck) return;
     if (state.status !== 'revealed' || !id) return;
     saveDraft(id, {
       capacityNote,
@@ -115,7 +118,38 @@ export function PersonaliseFlow() {
       </p>
       <ProfessionalToolDisclaimer className="mb-10 max-w-[600px]" />
 
-      <div className="grid gap-8 mb-12" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+      {strategy.responsive && !responsiveAck && (
+        <div className="bg-amber-50 border border-amber-300 rounded-xl px-5 py-4 mb-10 max-w-[600px] text-[13.5px] text-amber-900 leading-relaxed">
+          <div className="font-mono text-[10.5px] tracking-[0.08em] font-semibold mb-1.5 text-amber-700">
+            RESPONSIVE STRATEGY &mdash; ACKNOWLEDGEMENT REQUIRED
+          </div>
+          <p className="mb-3.5">
+            {strategy.name} is a responsive strategy. It&apos;s correct only in the context of
+            a specific formulation and is one of the least reliably judged categories of PBS
+            content &mdash; menu-selecting it without reading the formulation carries real risk.
+          </p>
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={responsiveAck}
+              onChange={(e) => setResponsiveAck(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              I&apos;ve reviewed this participant&apos;s formulation and escalation pattern and
+              confirm this strategy is appropriate here.
+            </span>
+          </label>
+        </div>
+      )}
+
+      <div
+        className="grid gap-8 mb-12"
+        style={{
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          opacity: strategy.responsive && !responsiveAck ? 0.4 : 1,
+          pointerEvents: strategy.responsive && !responsiveAck ? 'none' : 'auto',
+        }}>
         <div className="bg-white rounded-card p-[22px] shadow-card">
           <div className="font-mono text-[11px] font-semibold tracking-wide text-tertiary mb-2.5">
             STEP 1

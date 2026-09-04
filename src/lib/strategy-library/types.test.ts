@@ -9,7 +9,7 @@ function template(overrides: Partial<StrategyTemplate>): StrategyTemplate {
     shortDescription: '',
     evidenceTier: 'Strong',
     evidenceAuthorityTier: 1,
-    function: 'Attention',
+    strategyCategories: ['learning'],
     responsive: false,
     mechanism: '',
     citation: '',

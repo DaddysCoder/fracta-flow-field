@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { getStrategyById } from '../lib/strategy-library/strategies';
-import { EvidenceBadge, FunctionTag } from '../components/EvidenceBadge';
+import { CategoryTags, EvidenceBadge, ResponsiveTag } from '../components/EvidenceBadge';
 
 export function StrategyDetail() {
   const { id } = useParams();
@@ -32,9 +32,25 @@ export function StrategyDetail() {
       <div className="bg-white rounded-card-lg p-6 sm:p-9 max-w-[760px] shadow-card">
         <div className="flex gap-3 mb-4">
           <EvidenceBadge tier={strategy.evidenceTier} />
-          <FunctionTag label={strategy.function} />
+          {strategy.responsive ? (
+            <ResponsiveTag />
+          ) : (
+            <CategoryTags categories={strategy.strategyCategories} />
+          )}
         </div>
         <h2 className="font-bold text-2xl tracking-tight mb-6">{strategy.name}</h2>
+        {strategy.responsive && (
+          <div className="bg-amber-50 border border-amber-300 rounded-xl px-5 py-4 mb-6 text-[13.5px] text-amber-900 leading-relaxed">
+            <div className="font-mono text-[10.5px] tracking-[0.08em] font-semibold mb-1.5 text-amber-700">
+              RESPONSIVE STRATEGY
+            </div>
+            This is a reactive strategy — correct only in the context of a specific
+            formulation, and one of the least reliably judged categories of PBS content.
+            Personalising it requires reviewing this participant's formulation and
+            escalation pattern first; you&apos;ll be asked to confirm that before
+            proceeding.
+          </div>
+        )}
 
         <div className="mb-5">
           <div className="font-mono text-[11px] tracking-[0.08em] text-tertiary font-medium mb-2">

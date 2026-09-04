@@ -21,6 +21,16 @@ import type { StrategyTemplate } from './types';
 // single approved v1 for every template — none of these have a real
 // supersession chain yet; `resolveCurrentTemplate` in `./types` is ready
 // for when one does.
+//
+// `strategyCategories` replaces a prior `function` field (BehaviourFunction:
+// Attention/Escape-avoidance/Sensory/Access to tangibles/Communication).
+// That field was a design error carried over from an earlier draft:
+// function belongs to the behaviour, determined by the FBA tool's screener
+// + episode-triangulation logic, never to the strategy — see
+// `StrategyCategory` in `./types` for the full rationale. `redirect` and
+// `debrief` are responsive strategies (`responsive: true`) and carry no
+// categories; they're gated behind an explicit acknowledgement in
+// `PersonaliseFlow` rather than browsed/filtered like the other six.
 
 export const STRATEGIES: StrategyTemplate[] = [
   {
@@ -31,7 +41,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'Teaches a replacement communication response that accesses the same reinforcer as the behaviour of concern.',
     evidenceTier: 'Strong',
     evidenceAuthorityTier: 3,
-    function: 'Attention',
+    strategyCategories: ['communication'],
     responsive: false,
     mechanism:
       'Identifies the reinforcer maintaining the behaviour, then teaches and reinforces a communication response (word, sign, AAC) that accesses that same reinforcer more efficiently than the behaviour of concern.',
@@ -72,7 +82,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'Delivers the reinforcer on a fixed schedule, independent of behaviour, to reduce its motivating value.',
     evidenceTier: 'Strong',
     evidenceAuthorityTier: 3,
-    function: 'Attention',
+    strategyCategories: ['environmental'],
     responsive: false,
     mechanism:
       'Delivers the identified reinforcer on a time-based schedule, unrelated to the target behaviour. As motivation for the reinforcer decreases through satiation, the behaviour that used to earn it loses value — without needing to withhold the reinforcer contingently.',
@@ -117,7 +127,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'Builds behavioural momentum with easy requests before presenting a lower-probability demand.',
     evidenceTier: 'Emerging',
     evidenceAuthorityTier: 3,
-    function: 'Escape/avoidance',
+    strategyCategories: ['environmental'],
     responsive: false,
     mechanism:
       'Presents a short series of requests the participant reliably complies with, building behavioural momentum, immediately before the lower-probability demand — increasing the odds of compliance with the target request.',
@@ -158,7 +168,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'Provides regular access to a preferred sensory activity to meet sensory needs proactively.',
     evidenceTier: 'Practice-based',
     evidenceAuthorityTier: 3,
-    function: 'Sensory',
+    strategyCategories: ['environmental', 'health_wellbeing'],
     responsive: false,
     mechanism:
       'Offers regulated access to a preferred sensory activity at set points in the routine, addressing the sensory need directly rather than after escalation.',
@@ -198,7 +208,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'Offers a limited, structured choice between preferred items to reduce conflict over access.',
     evidenceTier: 'Emerging',
     evidenceAuthorityTier: 3,
-    function: 'Access to tangibles',
+    strategyCategories: ['environmental'],
     responsive: false,
     mechanism:
       'Presents a small, pre-agreed set of preferred items as a choice at transition points, giving the participant control over which reinforcer they access without an open-ended negotiation.',
@@ -239,7 +249,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'Teaches requesting via an augmentative and alternative communication system as the primary access route.',
     evidenceTier: 'Strong',
     evidenceAuthorityTier: 3,
-    function: 'Communication',
+    strategyCategories: ['communication'],
     responsive: false,
     mechanism:
       'Establishes an AAC exchange (device, PECS, key word sign) as the fastest, most reliable route to the reinforcer, so it out-competes the behaviour of concern as a communication strategy.',
@@ -280,7 +290,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'Responds to early precursor behaviour by redirecting to an alternative activity, before escalation.',
     evidenceTier: 'Practice-based',
     evidenceAuthorityTier: 3,
-    function: 'Escape/avoidance',
+    strategyCategories: [],
     responsive: true,
     mechanism:
       'Interrupts the behaviour chain at the earliest observable precursor by redirecting attention to a lower-demand or preferred activity, preventing escalation to the target behaviour.',
@@ -321,7 +331,7 @@ export const STRATEGIES: StrategyTemplate[] = [
       'A brief, low-demand check-in after an incident has fully de-escalated, to support recovery.',
     evidenceTier: 'Practice-based',
     evidenceAuthorityTier: 3,
-    function: 'Attention',
+    strategyCategories: [],
     responsive: true,
     mechanism:
       'Provides brief, calm attention after the participant has returned to baseline, supporting recovery and relationship repair without reinforcing the behaviour itself (attention is withheld during and immediately after the episode).',

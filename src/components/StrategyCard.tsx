@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { StrategyTemplate } from '../lib/strategy-library/types';
-import { EvidenceBadge, FunctionTag } from './EvidenceBadge';
+import { CategoryTags, EvidenceBadge, ResponsiveTag } from './EvidenceBadge';
 
 export function StrategyCard({ strategy }: { strategy: StrategyTemplate }) {
   return (
@@ -14,7 +14,11 @@ export function StrategyCard({ strategy }: { strategy: StrategyTemplate }) {
       </div>
       <div className="flex gap-2.5 items-start flex-none pt-0.5">
         <EvidenceBadge tier={strategy.evidenceTier} />
-        <FunctionTag label={strategy.function} />
+        {strategy.responsive ? (
+          <ResponsiveTag />
+        ) : (
+          <CategoryTags categories={strategy.strategyCategories} />
+        )}
       </div>
     </Link>
   );

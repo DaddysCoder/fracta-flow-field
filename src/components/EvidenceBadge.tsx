@@ -1,4 +1,4 @@
-import type { EvidenceTier } from '../lib/strategy-library/types';
+import type { EvidenceTier, StrategyCategory } from '../lib/strategy-library/types';
 
 export function EvidenceBadge({ tier }: { tier: EvidenceTier }) {
   return (
@@ -6,8 +6,32 @@ export function EvidenceBadge({ tier }: { tier: EvidenceTier }) {
   );
 }
 
-export function FunctionTag({ label }: { label: string }) {
-  return <span className="font-mono text-[11.5px] font-medium text-tertiary">{label}</span>;
+export const CATEGORY_LABELS: Record<StrategyCategory, string> = {
+  environmental: 'Environmental',
+  community: 'Community',
+  communication: 'Communication',
+  regulating: 'Regulating',
+  health_wellbeing: 'Health & wellbeing',
+  learning: 'Learning',
+};
+
+export function CategoryTags({ categories }: { categories: StrategyCategory[] }) {
+  if (categories.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {categories.map((c) => (
+        <span key={c} className="font-mono text-[11.5px] font-medium text-tertiary">
+          {CATEGORY_LABELS[c]}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+export function ResponsiveTag() {
+  return (
+    <span className="font-mono text-[11.5px] font-semibold text-amber-700">Responsive</span>
+  );
 }
 
 const TIER_ORDER: EvidenceTier[] = ['Strong', 'Emerging', 'Practice-based'];

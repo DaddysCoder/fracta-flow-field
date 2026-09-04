@@ -22,12 +22,24 @@ export type EvidenceTier = 'Strong' | 'Emerging' | 'Practice-based';
  */
 export type EvidenceAuthorityTier = 1 | 2 | 3 | 4 | 5;
 
-export type BehaviourFunction =
-  | 'Attention'
-  | 'Escape/avoidance'
-  | 'Sensory'
-  | 'Access to tangibles'
-  | 'Communication';
+/**
+ * Six proactive strategy categories (multi-select — a strategy can sit in
+ * more than one). Deliberately NOT a behavioural-function taxonomy
+ * (attention/escape/tangible/sensory): function belongs to the *behaviour*,
+ * determined by the FBA tool's screener + episode-triangulation logic
+ * (`FunctionHypothesis`), never to the strategy. Tagging strategies by
+ * function pre-empts that FBA→strategy matching (deferred to a future
+ * phase, and even then resolved outside a strategy's own record) and
+ * implies a clinical match this library isn't making. See the strategy
+ * library planning record for the full rationale behind this correction.
+ */
+export type StrategyCategory =
+  | 'environmental'
+  | 'community'
+  | 'communication'
+  | 'regulating'
+  | 'health_wellbeing'
+  | 'learning';
 
 /** Display-facing "figure was updated" summary — kept as-is from the pre-alignment schema; still shown by `SupersededBand`. */
 export interface SupersededInfo {
@@ -85,8 +97,22 @@ export interface StrategyTemplate {
   shortDescription: string;
   evidenceTier: EvidenceTier;
   evidenceAuthorityTier: EvidenceAuthorityTier;
-  function: BehaviourFunction;
-  /** True when this is a responsive strategy rather than a function-based one. */
+  /**
+   * Multi-select proactive categories. Empty for a responsive strategy
+   * (`responsive: true`) — responsive strategies are gated separately, not
+   * tagged into this scheme (see `responsive` below).
+   */
+  strategyCategories: StrategyCategory[];
+  /**
+   * True for a responsive (reactive) strategy. This is the class the
+   * evidence-base review flags as most dangerous via plain menu-selection —
+   * weakest inter-rater reliability of any BSP-QEII item, closest to the
+   * restrictive-practice boundary, and correct only in the context of a
+   * specific formulation (e.g. strategic capitulation only works alongside
+   * the proactive elements it depends on). Any UI offering a responsive
+   * strategy must require an explicit practitioner acknowledgement before
+   * personalising it — never just a separate browse tab.
+   */
   responsive: boolean;
   mechanism: string;
   citation: string;
