@@ -1,17 +1,28 @@
-import type { Strategy } from './types';
+import type { StrategyTemplate } from './types';
 
-// NOTE: every `variants` array below is PLACEHOLDER CONTENT — two starter
-// variants per strategy so the local matching logic in `src/ai/personalise.ts`
-// has something real to score and fill. The actual variant wording is a
-// content-authoring task, not a coding one; replace these before launch.
+// NOTE: every `personalisationRecords` array below is PLACEHOLDER CONTENT —
+// two starter records per strategy so the local matching logic in
+// `src/ai/personalise.ts` has something real to score and fill. The actual
+// wording is a content-authoring task, not a coding one; replace these
+// before launch.
+//
+// `evidenceAuthorityTier` defaults are a mechanical mapping from the
+// existing `evidenceTier` label (Strong→1, Emerging→3, Practice-based→5)
+// pending real evidence-layer authority classification of each source.
+// `version`/`approvalStatus`/`effectiveDate`/`current` are seeded as a
+// single approved v1 for every template — none of these have a real
+// supersession chain yet; `resolveCurrentTemplate` in `./types` is ready
+// for when one does.
 
-export const STRATEGIES: Strategy[] = [
+export const STRATEGIES: StrategyTemplate[] = [
   {
     id: 'fct',
+    templateId: 'fct',
     name: 'Functional communication training (FCT)',
     shortDescription:
       'Teaches a replacement communication response that accesses the same reinforcer as the behaviour of concern.',
     evidenceTier: 'Strong',
+    evidenceAuthorityTier: 1,
     function: 'Attention',
     responsive: false,
     mechanism:
@@ -24,17 +35,21 @@ export const STRATEGIES: Strategy[] = [
       'Select a communication response the participant can already produce, or can quickly learn.',
       'Reinforce every instance of the new response; place the old behaviour on extinction where safe to do so.',
     ],
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'fct-aac',
-        strategyId: 'fct',
+        templateId: 'fct',
         template:
           'Teach a request for attention using {{communicationMethod}}, modelled immediately before the natural opportunity within {{routine}}.',
         tags: { communicationMethod: ['aac', 'device', 'pecs'] },
       },
       {
         id: 'fct-verbal',
-        strategyId: 'fct',
+        templateId: 'fct',
         template:
           'Teach a simple verbal or gestural request for attention, practised during {{routine}} where attention-seeking is most likely.',
         tags: { communicationMethod: ['verbal', 'speech'] },
@@ -43,10 +58,12 @@ export const STRATEGIES: Strategy[] = [
   },
   {
     id: 'ncr',
+    templateId: 'ncr',
     name: 'Non-contingent reinforcement (NCR)',
     shortDescription:
       'Delivers the reinforcer on a fixed schedule, independent of behaviour, to reduce its motivating value.',
     evidenceTier: 'Strong',
+    evidenceAuthorityTier: 1,
     function: 'Attention',
     responsive: false,
     mechanism:
@@ -59,21 +76,25 @@ export const STRATEGIES: Strategy[] = [
       'Set an initial schedule denser than the natural rate of the behaviour.',
       'Deliver on schedule regardless of behaviour; thin the schedule as responding stabilises.',
     ],
-    superseded: {
+    supersededInfo: {
       previousFigure: 'Previous 61%',
       updatedFigure: 'Updated 34%',
     },
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'ncr-timer-slow',
-        strategyId: 'ncr',
+        templateId: 'ncr',
         template:
           'Deliver a preferred {{interest}} item on a fixed timer during {{routine}}, starting with a longer interval given their current pace.',
         tags: { interests: ['fidget', 'sensory'], comfortThreshold: 'low' },
       },
       {
         id: 'ncr-timer-standard',
-        strategyId: 'ncr',
+        templateId: 'ncr',
         template:
           'Deliver a preferred {{interest}} item on a fixed 10-minute schedule throughout {{routine}}, independent of behaviour.',
         tags: { comfortThreshold: 'medium' },
@@ -82,10 +103,12 @@ export const STRATEGIES: Strategy[] = [
   },
   {
     id: 'high-prob',
+    templateId: 'high-prob',
     name: 'High-probability request sequences',
     shortDescription:
       'Builds behavioural momentum with easy requests before presenting a lower-probability demand.',
     evidenceTier: 'Emerging',
+    evidenceAuthorityTier: 3,
     function: 'Escape/avoidance',
     responsive: false,
     mechanism:
@@ -98,17 +121,21 @@ export const STRATEGIES: Strategy[] = [
       'Deliver them in quick succession, reinforcing each compliance.',
       'Present the target (low-probability) request immediately after.',
     ],
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'high-prob-gentle',
-        strategyId: 'high-prob',
+        templateId: 'high-prob',
         template:
           'Open with two or three easy, preferred requests tied to {{interest}} before the harder ask during {{routine}} — keep pacing slow.',
         tags: { comfortThreshold: 'low' },
       },
       {
         id: 'high-prob-standard',
-        strategyId: 'high-prob',
+        templateId: 'high-prob',
         template:
           'Deliver 2–3 high-probability requests in quick succession, reinforcing each, immediately before the target request within {{routine}}.',
         tags: { comfortThreshold: 'medium' },
@@ -117,10 +144,12 @@ export const STRATEGIES: Strategy[] = [
   },
   {
     id: 'sensory-diet',
+    templateId: 'sensory-diet',
     name: 'Scheduled sensory input',
     shortDescription:
       'Provides regular access to a preferred sensory activity to meet sensory needs proactively.',
     evidenceTier: 'Practice-based',
+    evidenceAuthorityTier: 5,
     function: 'Sensory',
     responsive: false,
     mechanism:
@@ -133,16 +162,20 @@ export const STRATEGIES: Strategy[] = [
       'Schedule brief access at fixed points across the day.',
       'Fade prompting as the participant begins to request access independently.',
     ],
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'sensory-water',
-        strategyId: 'sensory-diet',
+        templateId: 'sensory-diet',
         template: 'Schedule brief {{interest}} access at set points within {{routine}}.',
         tags: { interests: ['water', 'sensory'] },
       },
       {
         id: 'sensory-general',
-        strategyId: 'sensory-diet',
+        templateId: 'sensory-diet',
         template:
           'Offer a short, preferred sensory activity at fixed points during {{routine}}, fading prompts as independence grows.',
         tags: {},
@@ -151,10 +184,12 @@ export const STRATEGIES: Strategy[] = [
   },
   {
     id: 'choice-tangibles',
+    templateId: 'choice-tangibles',
     name: 'Structured choice of tangibles',
     shortDescription:
       'Offers a limited, structured choice between preferred items to reduce conflict over access.',
     evidenceTier: 'Emerging',
+    evidenceAuthorityTier: 3,
     function: 'Access to tangibles',
     responsive: false,
     mechanism:
@@ -167,17 +202,21 @@ export const STRATEGIES: Strategy[] = [
       'Present the choice at the same transition point each time.',
       'Honour the choice immediately and consistently.',
     ],
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'choice-interest-led',
-        strategyId: 'choice-tangibles',
+        templateId: 'choice-tangibles',
         template:
           'Offer a choice between two {{interest}}-related items at each transition within {{routine}}.',
         tags: { interests: ['toy', 'game', 'trains'] },
       },
       {
         id: 'choice-general',
-        strategyId: 'choice-tangibles',
+        templateId: 'choice-tangibles',
         template:
           'Present a structured choice of 2–3 pre-agreed items at the same transition point during {{routine}}.',
         tags: {},
@@ -186,10 +225,12 @@ export const STRATEGIES: Strategy[] = [
   },
   {
     id: 'aac-request',
+    templateId: 'aac-request',
     name: 'AAC-based requesting',
     shortDescription:
       'Teaches requesting via an augmentative and alternative communication system as the primary access route.',
     evidenceTier: 'Strong',
+    evidenceAuthorityTier: 1,
     function: 'Communication',
     responsive: false,
     mechanism:
@@ -202,17 +243,21 @@ export const STRATEGIES: Strategy[] = [
       'Model the request exchange immediately before the natural opportunity.',
       'Reinforce every independent exchange; prompt only when needed.',
     ],
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'aac-device',
-        strategyId: 'aac-request',
+        templateId: 'aac-request',
         template:
           'Model a request exchange on their {{communicationMethod}} for {{interest}}, immediately before the natural opportunity.',
         tags: { communicationMethod: ['device', 'aac'] },
       },
       {
         id: 'aac-signing',
-        strategyId: 'aac-request',
+        templateId: 'aac-request',
         template:
           'Model the sign or gesture for {{interest}} using {{communicationMethod}}, prompting only as needed.',
         tags: { communicationMethod: ['sign', 'signing'] },
@@ -221,10 +266,12 @@ export const STRATEGIES: Strategy[] = [
   },
   {
     id: 'redirect',
+    templateId: 'redirect',
     name: 'Planned redirection',
     shortDescription:
       'Responds to early precursor behaviour by redirecting to an alternative activity, before escalation.',
     evidenceTier: 'Practice-based',
+    evidenceAuthorityTier: 5,
     function: 'Escape/avoidance',
     responsive: true,
     mechanism:
@@ -237,17 +284,21 @@ export const STRATEGIES: Strategy[] = [
       'Have the redirection activity ready and accessible in the setting.',
       'Redirect calmly and briefly; do not narrate the behaviour being avoided.',
     ],
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'redirect-low',
-        strategyId: 'redirect',
+        templateId: 'redirect',
         template:
           'At the earliest precursor, redirect calmly to {{interest}} — keep the offer low-demand given their current pace.',
         tags: { comfortThreshold: 'low' },
       },
       {
         id: 'redirect-standard',
-        strategyId: 'redirect',
+        templateId: 'redirect',
         template:
           'At the earliest precursor, redirect briefly to a preferred {{interest}} activity without narrating the behaviour being avoided.',
         tags: { comfortThreshold: 'medium' },
@@ -256,10 +307,12 @@ export const STRATEGIES: Strategy[] = [
   },
   {
     id: 'debrief',
+    templateId: 'debrief',
     name: 'Post-incident debrief',
     shortDescription:
       'A brief, low-demand check-in after an incident has fully de-escalated, to support recovery.',
     evidenceTier: 'Practice-based',
+    evidenceAuthorityTier: 5,
     function: 'Attention',
     responsive: true,
     mechanism:
@@ -272,17 +325,21 @@ export const STRATEGIES: Strategy[] = [
       'Keep the check-in brief and low-demand.',
       'Avoid discussing the incident itself during this step.',
     ],
-    variants: [
+    version: 1,
+    approvalStatus: 'approved',
+    effectiveDate: '2026-01-01',
+    current: true,
+    personalisationRecords: [
       {
         id: 'debrief-aac',
-        strategyId: 'debrief',
+        templateId: 'debrief',
         template:
           'Once fully settled, offer a brief, calm check-in using {{communicationMethod}} — no discussion of the incident.',
         tags: { communicationMethod: ['aac', 'device', 'sign'] },
       },
       {
         id: 'debrief-general',
-        strategyId: 'debrief',
+        templateId: 'debrief',
         template:
           'Once fully settled, offer a brief, low-demand check-in — keep it short and avoid discussing the incident.',
         tags: {},
@@ -291,6 +348,6 @@ export const STRATEGIES: Strategy[] = [
   },
 ];
 
-export function getStrategyById(id: string): Strategy | undefined {
+export function getStrategyById(id: string): StrategyTemplate | undefined {
   return STRATEGIES.find((s) => s.id === id);
 }

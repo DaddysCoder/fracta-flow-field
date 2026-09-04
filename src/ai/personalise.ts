@@ -1,5 +1,5 @@
 import type { ParticipantProfile } from '../lib/participant-profile/types';
-import type { ComfortLevel, PersonalisedVariant, Strategy } from '../lib/strategy-library/types';
+import type { ComfortLevel, PersonalisationRecord, StrategyTemplate } from '../lib/strategy-library/types';
 
 /**
  * Local, deterministic personalisation: scores this strategy's pre-authored
@@ -30,7 +30,7 @@ function deriveComfortLevel(comfortThreshold: string): ComfortLevel {
   return 'medium';
 }
 
-export function scoreVariant(variant: PersonalisedVariant, profile: ParticipantProfile): number {
+export function scoreVariant(variant: PersonalisationRecord, profile: ParticipantProfile): number {
   let score = 0;
 
   const profileInterests = splitList(profile.interests);
@@ -67,8 +67,8 @@ export function fillTemplate(template: string, profile: ParticipantProfile): str
   return template.replace(/{{\s*(\w+)\s*}}/g, (match, key: string) => slots[key] ?? match);
 }
 
-export function matchPersonalisedVariant(strategy: Strategy, profile: ParticipantProfile): string {
-  const variants = strategy.variants ?? [];
+export function matchPersonalisedVariant(strategy: StrategyTemplate, profile: ParticipantProfile): string {
+  const variants = strategy.personalisationRecords ?? [];
   if (variants.length === 0) {
     throw new PersonaliseError(
       'no-variant-match',
@@ -87,7 +87,7 @@ export function matchPersonalisedVariant(strategy: Strategy, profile: Participan
 export type PersonaliseSimulation = 'success' | PersonaliseErrorKind;
 
 export function requestPersonalisedVariant(
-  strategy: Strategy,
+  strategy: StrategyTemplate,
   profile: ParticipantProfile,
   simulate?: PersonaliseSimulation,
 ): string {

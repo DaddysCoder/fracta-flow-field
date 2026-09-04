@@ -1,10 +1,10 @@
-import type { Strategy } from './types';
+import type { StrategyTemplate } from './types';
 
 export type ExportFormat = 'plan' | 'session-log';
 
 /** Assembles the practitioner-facing export text, mechanism + citation always attached. */
 export function assembleExportText(
-  strategy: Strategy,
+  strategy: StrategyTemplate,
   draftText: string,
   format: ExportFormat,
 ): string {

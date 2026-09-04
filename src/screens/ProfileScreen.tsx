@@ -21,7 +21,16 @@ export function ProfileScreen() {
     setProfile(loadProfile(next));
   }
 
-  function updateField(field: keyof ParticipantProfile, value: string) {
+  type StringField =
+    | 'preferredName'
+    | 'communicationMethod'
+    | 'dailyRoutineNotes'
+    | 'interests'
+    | 'comfortThreshold'
+    | 'dateOfBirth'
+    | 'culturalSafetyNotes';
+
+  function updateField(field: StringField, value: string) {
     setProfile((prev) => ({ ...prev, [field]: value }));
   }
 
@@ -79,6 +88,18 @@ export function ProfileScreen() {
               placeholder="How much change/novelty can they tolerate?"
               onChange={(v) => updateField('comfortThreshold', v)}
             />
+            <Field
+              label="Date of birth"
+              value={profile.dateOfBirth ?? ''}
+              placeholder="YYYY-MM-DD"
+              onChange={(v) => updateField('dateOfBirth', v)}
+            />
+            <Field
+              label="Cultural safety notes"
+              value={profile.culturalSafetyNotes ?? ''}
+              placeholder="Anything a practitioner should know for culturally safe delivery"
+              onChange={(v) => updateField('culturalSafetyNotes', v)}
+            />
           </div>
           <button
             type="button"
@@ -104,6 +125,8 @@ export function ProfileScreen() {
             <ReadOnlyField label="Daily routine notes" value={profile.dailyRoutineNotes} />
             <ReadOnlyField label="Interests" value={profile.interests} />
             <ReadOnlyField label="Comfort threshold" value={profile.comfortThreshold} />
+            <ReadOnlyField label="Date of birth" value={profile.dateOfBirth ?? '—'} />
+            <ReadOnlyField label="Cultural safety notes" value={profile.culturalSafetyNotes ?? '—'} />
           </div>
           <div className="mt-5 text-[13px] text-secondary">
             Read-only here &mdash; edit this in Frame to update everywhere.
