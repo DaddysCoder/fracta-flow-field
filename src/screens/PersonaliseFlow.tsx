@@ -3,13 +3,14 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getStrategyById } from '../lib/strategy-library/strategies';
 import { MechanismCitationUnit } from '../components/MechanismCitationUnit';
 import { UpgradeMoment } from '../components/UpgradeMoment';
-import { PersonaliseErrorCard } from '../components/ErrorStates';
+import { AmbiguousMatchCard, PersonaliseErrorCard } from '../components/ErrorStates';
 import { useAuth } from '../state/auth';
 import { loadProfile } from '../lib/participant-profile/storage';
 import { isSuiteConnected } from '../lib/participant-profile/suite-detection';
 import { missingPersonalisationFields } from '../lib/participant-profile/types';
 import {
   requestPersonalisedVariant,
+  type AmbiguousCandidate,
   type PersonaliseErrorKind,
   type PersonaliseSimulation,
   PersonaliseError,
@@ -23,8 +24,9 @@ const DEFAULT_CAPACITY_NOTE =
 type GenerateState =
   | { status: 'idle' }
   | { status: 'loading' }
-  | { status: 'revealed'; draftText: string }
-  | { status: 'error'; kind: PersonaliseErrorKind };
+  | { status: 'revealed'; draftText: string; matchedFields?: string[]; missingFields?: string[] }
+  | { status: 'ambiguous'; candidates: AmbiguousCandidate[] }
+  | { status: 'error'; kind: Exclude<PersonaliseErrorKind, 'ambiguous-match'> };
 
 export function PersonaliseFlow() {
   const { id } = useParams();
@@ -70,19 +72,32 @@ export function PersonaliseFlow() {
     }
     setState({ status: 'loading' });
     try {
-      const draftText = requestPersonalisedVariant(
+      const match = requestPersonalisedVariant(
         strategy!,
         profile,
         import.meta.env.DEV ? simulate : undefined,
       );
-      setState({ status: 'revealed', draftText });
+      setState({
+        status: 'revealed',
+        draftText: match.draftText,
+        matchedFields: match.matchedFields,
+        missingFields: match.missingFields,
+      });
     } catch (err) {
       if (err instanceof PersonaliseError) {
-        setState({ status: 'error', kind: err.kind });
+        if (err.kind === 'ambiguous-match' && err.candidates) {
+          setState({ status: 'ambiguous', candidates: err.candidates });
+        } else {
+          setState({ status: 'error', kind: err.kind as Exclude<PersonaliseErrorKind, 'ambiguous-match'> });
+        }
       } else {
         setState({ status: 'error', kind: 'service' });
       }
     }
+  }
+
+  function handleChooseCandidate(candidate: AmbiguousCandidate) {
+    setState({ status: 'revealed', draftText: candidate.draftText });
   }
 
   function handleSave() {
@@ -163,6 +178,8 @@ export function PersonaliseFlow() {
                   >
                     <option value="success">Success (real matching)</option>
                     <option value="no-variant-match">No variant authored yet</option>
+                    <option value="no-suitable-match">No suitable match (all scored 0)</option>
+                    <option value="ambiguous-match">Ambiguous (tied top score)</option>
                     <option value="network">Network drop</option>
                     <option value="service">Service issue</option>
                   </select>
@@ -198,12 +215,22 @@ export function PersonaliseFlow() {
               <PersonaliseErrorCard kind={state.kind} onRetry={handleGenerate} />
             )}
 
+            {state.status === 'ambiguous' && (
+              <AmbiguousMatchCard candidates={state.candidates} onChoose={handleChooseCandidate} />
+            )}
+
             {state.status === 'revealed' && (
               <div
                 style={{
                   animation: `field-reveal ${revealDuration} cubic-bezier(0.34,1.56,0.64,1)`,
                 }}
               >
+                {state.missingFields && state.missingFields.length > 0 && (
+                  <p className="text-[11.5px] text-tertiary mb-2.5">
+                    Matched on {state.matchedFields && state.matchedFields.length > 0 ? state.matchedFields.join(', ') : 'nothing specific'};
+                    not tagged for {state.missingFields.join(', ')}.
+                  </p>
+                )}
                 <textarea
                   value={state.draftText}
                   onChange={(e) =>
