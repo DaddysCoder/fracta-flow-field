@@ -1,7 +1,7 @@
-import type { PersonaliseErrorKind } from '../ai/personalise';
+import type { AmbiguousCandidate, PersonaliseErrorKind } from '../ai/personalise';
 
 const COPY: Record<
-  PersonaliseErrorKind,
+  Exclude<PersonaliseErrorKind, 'ambiguous-match'>,
   { eyebrow: string; title: string; body: string; retryLabel: string; solid: boolean }
 > = {
   'no-variant-match': {
@@ -9,6 +9,14 @@ const COPY: Record<
     title: 'No personalised variant for this strategy yet',
     body:
       "No pre-authored variant exists for this strategy yet — this is expected while content is still being written, not a technical fault. The mechanism and citation are unaffected; you can write this entry manually in the meantime.",
+    retryLabel: 'Write manually',
+    solid: false,
+  },
+  'no-suitable-match': {
+    eyebrow: 'NO SUITABLE MATCH — NOT A BUG',
+    title: "None of the variants fit this profile",
+    body:
+      "This strategy has pre-authored variants, but none of them matched anything in this participant's profile — so nothing is being suggested. The mechanism and citation are unaffected; write this entry manually.",
     retryLabel: 'Write manually',
     solid: false,
   },
@@ -30,11 +38,44 @@ const COPY: Record<
   },
 };
 
+export function AmbiguousMatchCard({
+  candidates,
+  onChoose,
+}: {
+  candidates: AmbiguousCandidate[];
+  onChoose: (candidate: AmbiguousCandidate) => void;
+}) {
+  return (
+    <div className="bg-white rounded-card p-6 shadow-card">
+      <div className="font-mono text-[10.5px] font-medium tracking-wide text-tertiary mb-3">
+        TIE — YOUR CALL
+      </div>
+      <div className="font-bold text-base mb-2.5">{candidates.length} variants matched equally well</div>
+      <p className="text-[13.5px] text-ink-soft leading-relaxed mb-[18px]">
+        The library couldn&apos;t pick a clear winner, so it isn&apos;t guessing. Choose the wording that
+        best fits this participant.
+      </p>
+      <div className="flex flex-col gap-2.5">
+        {candidates.map((candidate) => (
+          <button
+            key={candidate.id}
+            type="button"
+            onClick={() => onChoose(candidate)}
+            className="text-left px-3.5 py-3 rounded-lg border border-border text-[13px] text-ink-soft leading-snug focus-ring hover:border-accent hover:bg-surface transition-colors"
+          >
+            {candidate.draftText}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PersonaliseErrorCard({
   kind,
   onRetry,
 }: {
-  kind: PersonaliseErrorKind;
+  kind: Exclude<PersonaliseErrorKind, 'ambiguous-match'>;
   onRetry: () => void;
 }) {
   const copy = COPY[kind];
