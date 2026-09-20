@@ -17,7 +17,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PRODUCT_URL: https://field.whatbit.dev
+  # Confirmed live Field surface (marketing). Worker custom domain field.whatbit.dev
+  # does not resolve yet — do not point CI at it until DNS + deploy are live.
+  LIVE_URL: https://whatbit.dev/field
 
 jobs:
   quality:
@@ -58,8 +60,8 @@ jobs:
     steps:
       - name: Verify production is reachable
         run: |
-          STATUS=$(curl -L --connect-timeout 5 --max-time 20 -sS -o /tmp/product.html -w '%{http_code}' "$PRODUCT_URL")
-          echo "HTTP $STATUS from $PRODUCT_URL"
+          STATUS=$(curl -L --connect-timeout 5 --max-time 20 -sS -o /tmp/product.html -w '%{http_code}' "$LIVE_URL")
+          echo "HTTP $STATUS from $LIVE_URL"
           test "$STATUS" -ge 200
           test "$STATUS" -lt 400
           test -s /tmp/product.html
@@ -67,7 +69,7 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         continue-on-error: true
         run: |
-          npx --yes lighthouse@12 "$PRODUCT_URL" --quiet --chrome-flags='--headless --no-sandbox' --output=json --output-path=/tmp/lighthouse.json
+          npx --yes lighthouse@12 "$LIVE_URL" --quiet --chrome-flags='--headless --no-sandbox' --output=json --output-path=/tmp/lighthouse.json
           node <<'NODE'
           const fs = require('fs')
           const r = JSON.parse(fs.readFileSync('/tmp/lighthouse.json', 'utf8'))
@@ -94,7 +96,7 @@ jobs:
             const bad = (r) => !['success', 'skipped'].includes(r)
             const failed = bad('${{ needs.quality.result }}') || bad('${{ needs.live.result }}')
             if (failed) {
-              const body = `Automated product-health checks failed.\n\nRun: ${runUrl}\n\nThis issue is reused to avoid alert spam.`
+              const body = `Automated product-health checks failed.\n\nLive URL: https://whatbit.dev/field\nRun: ${runUrl}\n\nThis issue is reused to avoid alert spam.`
               if (existing) await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body })
               else await github.rest.issues.create({ ...context.repo, title, body })
             } else if (existing) {
