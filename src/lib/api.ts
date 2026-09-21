@@ -51,3 +51,23 @@ export function startCheckout(interval: 'month' | 'year'): Promise<{ url: string
 export function openBillingPortal(): Promise<{ url: string }> {
   return request('/billing-portal', { method: 'POST' }, true);
 }
+
+export type SuiteProvider = 'frame' | 'vector';
+
+export interface SuiteConnection {
+  provider: SuiteProvider;
+  connectedAt: string;
+  expiresAt: string | null;
+}
+
+export function startSuiteConnect(provider: SuiteProvider): Promise<{ url: string }> {
+  return request(`/connect/${provider}/start`, { method: 'POST' }, true);
+}
+
+export function fetchSuiteConnectStatus(): Promise<{ frame: SuiteConnection | null; vector: SuiteConnection | null }> {
+  return request('/connect/status', {}, true);
+}
+
+export function disconnectSuite(provider: SuiteProvider): Promise<{ ok: true }> {
+  return request(`/connect/${provider}/disconnect`, { method: 'POST' }, true);
+}

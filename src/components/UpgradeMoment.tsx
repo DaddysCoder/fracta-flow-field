@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../state/auth';
 import { AuthModal } from './AuthModal';
+import { SuiteConnectRow } from './SuiteConnectRow';
 
 /** Triggered at the exact point a Free user clicks Generate. Evidence is never gated. */
 export function UpgradeMoment({ strategyName }: { strategyName: string }) {
@@ -68,7 +69,8 @@ export function UpgradeMoment({ strategyName }: { strategyName: string }) {
           {interval === 'year' ? '$290/yr' : '$29/mo'} &middot; no card required for trial
         </span>
       </div>
-      {error && <p className="text-[12.5px] text-red-600">{error}</p>}
+      {error && <p className="text-[12.5px] text-red-600 mb-3">{error}</p>}
+      <SuiteConnectRow />
       {authModalOpen && <AuthModal onClose={() => setAuthModalOpen(false)} />}
     </div>
   );
