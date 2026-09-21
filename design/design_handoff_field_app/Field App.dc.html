@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" type="image/svg+xml" href="assets/field-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#FAFAF9;-webkit-font-smoothing:antialiased;}
+  a{color:#1B6E5C;text-decoration:none;}
+  a:hover{color:#154F41;}
+  ::selection{background:#D9EAE4;}
+  textarea{font-family:'Instrument Sans',Arial,sans-serif;}
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#FAFAF9"/><circle cx="100" cy="100" r="55" fill="#1B6E5C"/></svg></template>
+
+<div style="min-height:100vh;display:flex;font-family:'Instrument Sans',Arial,sans-serif;color:#18181B;background:#FAFAF9;">
+
+  <div style="width:236px;flex-shrink:0;background:#FFFFFF;border-right:1px solid #ECEAE6;display:flex;flex-direction:column;padding:22px 0;">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 20px 20px;border-bottom:1px solid #ECEAE6;margin-bottom:18px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#1B6E5C;flex-shrink:0;"></span>
+      <div style="font-weight:700;font-size:15px;letter-spacing:-0.01em;">Field<span style="color:#A3A19C;font-weight:500;font-size:0.72em;margin-left:5px;">by WhatBit</span></div>
+    </div>
+
+    <div style="padding:0 12px;flex:1;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#A3A19C;font-weight:500;padding:6px 10px 8px;">LIBRARY</div>
+      <sc-for list="{{ navLibrary }}" as="item" hint-placeholder-count="2">
+        <div onClick="{{ item.onClick }}" style="{{ item.style }}"><span style="{{ item.dotStyle }}"></span>{{ item.label }}</div>
+      </sc-for>
+
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#A3A19C;font-weight:500;padding:16px 10px 8px;">DRAFTING</div>
+      <sc-for list="{{ navDrafting }}" as="item" hint-placeholder-count="2">
+        <div onClick="{{ item.onClick }}" style="{{ item.style }}"><span style="{{ item.dotStyle }}"></span>{{ item.label }}</div>
+      </sc-for>
+
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#A3A19C;font-weight:500;padding:16px 10px 8px;">PARTICIPANT</div>
+      <sc-for list="{{ navParticipant }}" as="item" hint-placeholder-count="1">
+        <div onClick="{{ item.onClick }}" style="{{ item.style }}"><span style="{{ item.dotStyle }}"></span>{{ item.label }}</div>
+      </sc-for>
+
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#A3A19C;font-weight:500;padding:16px 10px 8px;">ACCOUNT</div>
+      <sc-for list="{{ navAccount }}" as="item" hint-placeholder-count="2">
+        <div onClick="{{ item.onClick }}" style="{{ item.style }}"><span style="{{ item.dotStyle }}"></span>{{ item.label }}</div>
+      </sc-for>
+    </div>
+
+    <div style="padding:12px 12px 0;border-top:1px solid #ECEAE6;">
+      <div style="display:flex;align-items:center;gap:9px;padding:12px 10px 4px;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#18181B;color:#FFFFFF;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">TK</div>
+        <div style="min-width:0;">
+          <div style="font-size:12px;font-weight:700;color:#18181B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tia K.</div>
+          <div style="font-size:10px;color:#A3A19C;">Free plan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+    <div style="height:56px;flex-shrink:0;border-bottom:1px solid #ECEAE6;background:#FFFFFF;display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:16px;">
+      <div style="font-size:13px;font-weight:700;color:#18181B;">{{ screenTitle }}</div>
+      <div style="display:flex;align-items:center;gap:8px;background:#FAFAF9;border-radius:8px;padding:8px 12px;width:230px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#A3A19C" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="#A3A19C" stroke-width="2" stroke-linecap="round"/></svg>
+        <div style="font-size:12px;color:#A3A19C;">Search strategies...</div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:auto;padding:36px 40px 60px;">
+
+      <sc-if value="{{ isBrowser }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:840px;">
+          <div style="font-weight:700;font-size:24px;letter-spacing:-0.015em;margin-bottom:8px;">Browse by behaviour function.</div>
+          <div style="font-size:14.5px;color:#6B6B70;margin-bottom:32px;max-width:520px;line-height:1.6;">Responsive strategies live in their own tab — they never mix into the function filter.</div>
+
+          <div style="display:flex;gap:28px;border-bottom:1px solid #ECEAE6;margin-bottom:24px;">
+            <div style="padding-bottom:12px;font-size:14px;font-weight:700;color:#18181B;border-bottom:2px solid #1B6E5C;">By function</div>
+            <div style="padding-bottom:12px;font-size:14px;font-weight:600;color:#A3A19C;">Responsive strategies</div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;margin-bottom:24px;">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <span style="padding:6px 13px;border-radius:7px;background:#18181B;color:#FFFFFF;font-size:12.5px;font-weight:600;">Attention</span>
+              <span style="padding:6px 13px;border-radius:7px;background:#18181B;color:#FFFFFF;font-size:12.5px;font-weight:600;">Escape/avoidance</span>
+              <span style="padding:6px 13px;border-radius:7px;background:#FFFFFF;border:1px solid #E7E5E2;color:#57554F;font-size:12.5px;font-weight:600;">Sensory</span>
+              <span style="padding:6px 13px;border-radius:7px;background:#FFFFFF;border:1px solid #E7E5E2;color:#57554F;font-size:12.5px;font-weight:600;">Access to tangibles</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#A3A19C;font-weight:500;letter-spacing:0.05em;margin-right:2px;">EVIDENCE</span>
+              <span style="padding:5px 12px;border-radius:20px;background:#1B6E5C;color:#FFFFFF;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;">Strong</span>
+              <span style="padding:5px 12px;border-radius:20px;color:#57554F;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;">Emerging</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ strategies }}" as="s" hint-placeholder-count="3">
+              <div onClick="{{ s.onClick }}" style="background:#FFFFFF;border-radius:12px;padding:20px 22px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;cursor:pointer;transition:box-shadow 0.15s ease;" style-hover="box-shadow:0 4px 6px rgba(24,24,27,0.06),0 10px 24px rgba(24,24,27,0.08);">
+                <div style="max-width:580px;">
+                  <div style="font-weight:700;font-size:16px;margin-bottom:5px;">{{ s.name }}</div>
+                  <div style="font-size:13px;color:#6B6B70;line-height:1.55;">{{ s.desc }}</div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-start;flex:none;padding-top:2px;">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:{{ s.evidenceColor }};">{{ s.evidence }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#A3A19C;">{{ s.function }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px;">
+          <div style="font-weight:700;font-size:24px;letter-spacing:-0.015em;margin-bottom:24px;">Mechanism and citation, always in view.</div>
+          <div style="background:#FFFFFF;border-radius:14px;padding:32px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 8px 20px rgba(24,24,27,0.05);">
+            <div style="display:flex;gap:12px;margin-bottom:16px;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#1B6E5C;">Strong evidence</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:#A3A19C;">Attention</span>
+            </div>
+            <div style="font-weight:700;font-size:22px;letter-spacing:-0.01em;margin-bottom:22px;">Non-contingent reinforcement (NCR)</div>
+            <div style="margin-bottom:22px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.07em;color:#A3A19C;font-weight:500;margin-bottom:8px;">MECHANISM</div>
+              <div style="font-size:14.5px;color:#33322E;line-height:1.7;">Delivers the identified reinforcer on a time-based schedule, unrelated to the target behaviour. As motivation for the reinforcer decreases through satiation, the behaviour that used to earn it loses value — without needing to withhold the reinforcer contingently.</div>
+            </div>
+            <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:12px;padding:16px 18px;margin:22px 0;box-shadow:0 4px 14px rgba(27,110,92,0.08);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.07em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION &middot; PERMANENT SOURCE</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#33322E;line-height:1.6;">Tucker, M., Sigafoos, J., &amp; Bushell, H. (1998). Comprehensive review of self-injurious behavior treated with noncontingent reinforcement. Behavior Modification, 22(4), 529&ndash;547.</div>
+            </div>
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.07em;color:#A3A19C;font-weight:500;margin-bottom:10px;">HOW TO USE</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#33322E;line-height:1.6;">
+                <div>1. Identify the reinforcer maintaining the behaviour from FBA data.</div>
+                <div>2. Set an initial schedule denser than the natural rate of the behaviour.</div>
+                <div>3. Deliver on schedule regardless of behaviour; thin the schedule as responding stabilises.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPersonalise }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1000px;">
+          <div style="font-weight:700;font-size:24px;letter-spacing:-0.015em;margin-bottom:8px;">A draft to review, never the final word.</div>
+          <div style="font-size:14.5px;color:#6B6B70;margin-bottom:36px;max-width:580px;line-height:1.6;">Capacity note, then an optional AI draft, then a review step that's always editable before saving.</div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px;margin-bottom:36px;">
+            <div style="background:#FFFFFF;border-radius:12px;padding:20px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:0.05em;color:#A3A19C;margin-bottom:10px;">STEP 1</div>
+              <div style="font-weight:700;font-size:14.5px;margin-bottom:10px;">Capacity note</div>
+              <div style="font-size:13px;color:#6B6B70;line-height:1.55;margin-bottom:14px;">What's realistic for this participant and setting?</div>
+              <div style="font-size:13px;color:#33322E;line-height:1.55;background:#F5F4F1;border-radius:8px;padding:12px 14px;">Support worker present most shifts; can deliver reinforcement on a timer but not track duration data reliably yet.</div>
+            </div>
+            <div style="background:#FFFFFF;border-radius:12px;padding:20px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:0.05em;color:#A3A19C;margin-bottom:10px;">STEP 2</div>
+              <div style="font-weight:700;font-size:14.5px;margin-bottom:10px;">Generate</div>
+              <div style="font-size:13px;color:#6B6B70;line-height:1.55;margin-bottom:16px;">Uses the participant's profile and this capacity note to draft personalised wording.</div>
+              <button onClick="{{ onGenerate }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:8px;background:#1B6E5C;color:#FFFFFF;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;transition:background 0.1s ease;" style-hover="background:#154F41;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:0.05em;background:rgba(255,255,255,0.2);padding:2px 6px;border-radius:4px;">LOGIC</span>
+                {{ generateLabel }}
+              </button>
+            </div>
+            <div style="background:#F5F4F1;border-radius:12px;padding:20px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:0.05em;color:#A3A19C;margin-bottom:10px;">SOMETIMES</div>
+              <div style="font-weight:700;font-size:14.5px;margin-bottom:10px;color:#57554F;">Draft unavailable</div>
+              <div style="font-size:13px;color:#6B6B70;line-height:1.55;margin-bottom:14px;">This participant's profile is missing information the draft needs: daily routine and communication method.</div>
+              <a href="#" onClick="{{ goProfile }}" style="font-size:13px;font-weight:700;">Add these to the profile &rarr;</a>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,300px);gap:24px;align-items:start;">
+            <div style="background:#F5F4F1;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);">
+              <div style="font-weight:700;font-size:14.5px;margin-bottom:6px;">Review — always editable</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;color:#57554F;margin-bottom:14px;">Draft &middot; review before saving</div>
+              <sc-if value="{{ revealed }}" hint-placeholder-val="{{ false }}">
+                <textarea style="width:100%;min-height:120px;border:1px solid #E7E5E2;border-radius:10px;padding:14px;font-size:14px;line-height:1.6;color:#33322E;resize:vertical;box-sizing:border-box;background:#FFFFFF;">Deliver a preferred sensory item (fidget toy) on a 10-minute fixed schedule during support shifts, independent of behaviour. Given limited data tracking capacity, start with the timer method rather than a data sheet, and increase the interval by 2 minutes each week responding is stable.</textarea>
+                <div style="display:flex;gap:12px;margin-top:14px;">
+                  <button onClick="{{ goOutput }}" style="padding:9px 18px;border-radius:8px;background:#18181B;color:#FFFFFF;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;">Save to plan</button>
+                  <button onClick="{{ onReset }}" style="padding:9px 18px;border-radius:8px;background:transparent;color:#57554F;font-size:13px;font-weight:600;border:1px solid #E7E5E2;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;">Regenerate</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ notRevealed }}" hint-placeholder-val="{{ true }}">
+                <div style="min-height:120px;border:1.5px dashed #D8D5D0;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#A3A19C;font-size:13px;">Draft will appear here</div>
+              </sc-if>
+            </div>
+            <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:14px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,110,92,0.08);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.07em;color:#1B6E5C;font-weight:600;margin-bottom:10px;">MECHANISM</div>
+              <div style="font-size:12.5px;color:#33322E;line-height:1.6;margin-bottom:16px;">Reduces motivating value of the reinforcer via satiation, independent of behaviour.</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.07em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#33322E;line-height:1.5;">Tucker et al. (1998). Behavior Modification, 22(4), 529&ndash;547.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOutput }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1000px;">
+          <div style="font-weight:700;font-size:24px;letter-spacing:-0.015em;margin-bottom:8px;">Plan wording, or session-log wording.</div>
+          <div style="font-size:14.5px;color:#6B6B70;margin-bottom:32px;max-width:560px;line-height:1.6;">Mechanism and citation stay pinned alongside either way.</div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,280px);gap:24px;align-items:start;">
+            <div style="background:#FFFFFF;border-radius:14px;padding:26px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+                <div style="display:inline-flex;background:#F5F4F1;border-radius:9px;padding:4px;">
+                  <span style="padding:7px 14px;font-size:13px;font-weight:600;background:#18181B;color:#FFFFFF;border-radius:6px;">Plan format</span>
+                  <span style="padding:7px 14px;font-size:13px;font-weight:600;color:#57554F;">Session-log format</span>
+                </div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;color:#1B6E5C;">Generated draft &middot; edited</span>
+              </div>
+              <div style="font-size:15.5px;color:#33322E;line-height:1.75;">Deliver a preferred sensory item (fidget toy) on a fixed 10-minute schedule throughout support shifts, independent of behaviour. Increase the interval by 2 minutes weekly once responding is stable. Track using the shift timer rather than a data sheet, given current recording capacity.</div>
+            </div>
+            <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:14px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,110,92,0.08);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.07em;color:#1B6E5C;font-weight:600;margin-bottom:10px;">MECHANISM</div>
+              <div style="font-size:12.5px;color:#33322E;line-height:1.6;margin-bottom:16px;">Reduces motivating value of the reinforcer via satiation, independent of behaviour.</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.07em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#33322E;line-height:1.5;">Tucker et al. (1998). Behavior Modification, 22(4), 529&ndash;547.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1000px;">
+          <div style="font-weight:700;font-size:24px;letter-spacing:-0.015em;margin-bottom:8px;">Same data, two framings.</div>
+          <div style="font-size:14.5px;color:#6B6B70;margin-bottom:36px;max-width:600px;line-height:1.6;">Standalone practitioners fill this in by hand. Suite-connected practitioners see it as pulled data, not a form.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;">
+            <div style="background:#FFFFFF;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(24,24,27,0.03),0 4px 10px rgba(24,24,27,0.03);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:0.05em;color:#A3A19C;margin-bottom:20px;">STANDALONE &mdash; INTAKE FORM</div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div><div style="font-size:11.5px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Preferred name</div><div style="border:1px solid #E7E5E2;border-radius:8px;padding:9px 12px;font-size:14px;">Jordan</div></div>
+                <div><div style="font-size:11.5px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Communication method</div><div style="border:1px solid #E7E5E2;border-radius:8px;padding:9px 12px;font-size:14px;">Key word signing + AAC device</div></div>
+                <div><div style="font-size:11.5px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Daily routine notes</div><div style="border:1px solid #E7E5E2;border-radius:8px;padding:9px 12px;font-size:14px;color:#C7C4BE;">Add routine details&hellip;</div></div>
+              </div>
+              <button style="margin-top:18px;padding:9px 18px;border-radius:8px;background:#18181B;color:#FFFFFF;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;">Save profile</button>
+            </div>
+            <div style="background:#FFFFFF;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 8px 20px rgba(27,110,92,0.06);border:1px solid #D9EAE4;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:0.05em;color:#1B6E5C;">SUITE-CONNECTED &mdash; PROFILE SUMMARY</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;color:#1B6E5C;">Pulled from Frame &middot; synced 2h ago</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div><div style="font-size:11.5px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Preferred name</div><div style="font-size:14px;color:#33322E;">Jordan</div></div>
+                <div><div style="font-size:11.5px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Communication method</div><div style="font-size:14px;color:#33322E;">Key word signing + AAC device</div></div>
+                <div><div style="font-size:11.5px;color:#A3A19C;font-weight:600;margin-bottom:6px;">Daily routine notes</div><div style="font-size:14px;color:#33322E;">Structured morning routine, 1:1 support 8&ndash;11am</div></div>
+              </div>
+              <div style="margin-top:18px;font-size:12.5px;color:#6B6B70;">Read-only here &mdash; edit this in Frame to update everywhere.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPaywall }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1000px;">
+          <div style="font-weight:700;font-size:24px;letter-spacing:-0.015em;margin-bottom:8px;">Evidence stays open. Drafting is Pro.</div>
+          <div style="font-size:14.5px;color:#6B6B70;margin-bottom:36px;max-width:600px;line-height:1.6;">The exact moment a Free user hits Generate draft.</div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,280px);gap:24px;align-items:start;">
+            <div style="background:#FFFFFF;border-radius:14px;padding:26px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 6px 16px rgba(24,24,27,0.05);">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:#A3A19C;letter-spacing:0.05em;">FREE PLAN</span>
+                <span style="font-size:14px;font-weight:700;color:#33322E;">Non-contingent reinforcement (NCR)</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:22px;max-width:400px;">
+                <div style="height:11px;width:92%;background:#F0EEEA;border-radius:3px;"></div>
+                <div style="height:11px;width:100%;background:#F0EEEA;border-radius:3px;"></div>
+                <div style="height:11px;width:70%;background:#F0EEEA;border-radius:3px;"></div>
+              </div>
+              <div style="font-weight:700;font-size:20px;letter-spacing:-0.01em;margin-bottom:10px;">Personalised drafting is a Pro feature</div>
+              <div style="font-size:14px;color:#6B6B70;line-height:1.65;margin-bottom:22px;max-width:460px;">Free includes the full strategy library with mechanism and citation for every entry, for up to 2 participants. Pro adds predictive personalised drafting, using your participant's own profile and capacity notes.</div>
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+                <button style="padding:11px 20px;border-radius:9px;background:#1B6E5C;color:#FFFFFF;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;transition:background 0.1s ease;" style-hover="background:#154F41;">Start 14-day free trial</button>
+                <span style="font-size:12px;color:#6B6B70;">$29/mo or $290/yr &middot; no card required for trial</span>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-top:16px;border-top:1px solid #ECEAE6;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:0.05em;color:#A3A19C;margin-right:2px;">PRO SUITE</span>
+                <button style="padding:8px 14px;border-radius:7px;background:#FFFFFF;border:1px solid #E7E5E2;color:#18181B;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;transition:border-color 0.1s ease;" style-hover="border-color:#1B6E5C;">Connect Frame</button>
+                <button style="padding:8px 14px;border-radius:7px;background:#FFFFFF;border:1px solid #E7E5E2;color:#18181B;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;transition:border-color 0.1s ease;" style-hover="border-color:#1B6E5C;">Connect Vector</button>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1.5px solid #1B6E5C;border-radius:14px;padding:20px 22px;box-shadow:0 4px 14px rgba(27,110,92,0.08);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.07em;color:#1B6E5C;font-weight:600;margin-bottom:10px;">MECHANISM &middot; UNLOCKED</div>
+              <div style="font-size:12.5px;color:#33322E;line-height:1.6;margin-bottom:16px;">Reduces motivating value of the reinforcer via satiation, independent of behaviour.</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.07em;color:#1B6E5C;font-weight:600;margin-bottom:8px;">CITATION &middot; UNLOCKED</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#33322E;line-height:1.5;">Tucker et al. (1998). Behavior Modification, 22(4), 529&ndash;547.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isErrors }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1000px;">
+          <div style="font-weight:700;font-size:24px;letter-spacing:-0.015em;margin-bottom:8px;">Three problems, three honest messages.</div>
+          <div style="font-size:14.5px;color:#6B6B70;margin-bottom:32px;max-width:580px;line-height:1.6;">A refusal is not the same problem as a dropped connection.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
+            <div style="background:#FFFFFF;border-radius:12px;padding:22px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.05em;color:#A3A19C;margin-bottom:12px;">CONTENT REVIEW &mdash; NOT A BUG</div>
+              <div style="font-weight:700;font-size:15px;margin-bottom:10px;">Draft couldn't be generated</div>
+              <div style="font-size:13px;color:#33322E;line-height:1.6;margin-bottom:16px;">Our content policy blocked this draft, most likely from wording in the capacity note. This isn't a technical fault, and nothing you entered was sent anywhere else. Try rephrasing the note, or write this entry manually.</div>
+              <button style="padding:8px 14px;border-radius:7px;background:transparent;border:1px solid #E7E5E2;color:#18181B;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;">Edit capacity note</button>
+            </div>
+            <div style="background:#FFFFFF;border-radius:12px;padding:22px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.05em;color:#A3A19C;margin-bottom:12px;">CONNECTION ISSUE</div>
+              <div style="font-weight:700;font-size:15px;margin-bottom:10px;">Couldn't reach Field</div>
+              <div style="font-size:13px;color:#33322E;line-height:1.6;margin-bottom:16px;">Your connection dropped before the draft came back. Nothing was generated or charged. Your capacity note is still here &mdash; check your connection and try again.</div>
+              <button style="padding:8px 14px;border-radius:7px;background:#18181B;color:#FFFFFF;border:none;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;">Retry</button>
+            </div>
+            <div style="background:#FFFFFF;border-radius:12px;padding:22px;box-shadow:0 1px 2px rgba(24,24,27,0.04),0 4px 12px rgba(24,24,27,0.04);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.05em;color:#A3A19C;margin-bottom:12px;">SERVICE ISSUE, OUR SIDE</div>
+              <div style="font-weight:700;font-size:15px;margin-bottom:10px;">Something went wrong on our end</div>
+              <div style="font-size:13px;color:#33322E;line-height:1.6;margin-bottom:16px;">The drafting service didn't respond. Your capacity note and profile data are unaffected. If this keeps happening, the strategy library and citations still work &mdash; you can write the entry manually in the meantime.</div>
+              <button style="padding:8px 14px;border-radius:7px;background:#18181B;color:#FFFFFF;border:none;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',Arial,sans-serif;">Retry</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { screen: 'browser', revealed: false };
+
+  strategiesData = [
+    { name: 'Functional communication training (FCT)', desc: 'Teaches a replacement communication response that accesses the same reinforcer as the behaviour of concern.', evidence: 'Strong evidence', evidenceColor: '#1B6E5C', function: 'Attention' },
+    { name: 'Non-contingent reinforcement (NCR)', desc: 'Delivers the reinforcer on a fixed schedule, independent of behaviour, to reduce its motivating value.', evidence: 'Strong evidence', evidenceColor: '#1B6E5C', function: 'Attention' },
+    { name: 'High-probability request sequences', desc: 'Builds behavioural momentum with easy requests before presenting a lower-probability demand.', evidence: 'Emerging evidence', evidenceColor: '#57554F', function: 'Escape/avoidance' }
+  ];
+
+  navItemStyle(active) {
+    return `display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:${active ? 700 : 600};color:${active ? '#18181B' : '#57554F'};background:${active ? '#F5F4F1' : 'transparent'};margin-bottom:2px;cursor:pointer;transition:background 0.15s ease;`;
+  }
+  dotStyle(active) {
+    return `width:6px;height:6px;border-radius:50%;background:${active ? '#1B6E5C' : '#D8D5D0'};flex-shrink:0;`;
+  }
+  go(screen) { this.setState({ screen }); }
+
+  renderVals() {
+    const s = this.state.screen;
+    const nav = (items) => items.map(n => ({ label: n.label, onClick: () => this.go(n.key), style: this.navItemStyle(s === n.key), dotStyle: this.dotStyle(s === n.key) }));
+    const titles = { browser: 'Strategy browser', detail: 'Strategy detail', personalise: 'Personalise draft', output: 'Output view', profile: 'Participant profile', paywall: 'Upgrade to Pro', errors: 'Error states' };
+
+    return {
+      navLibrary: nav([{ key: 'browser', label: 'Strategy browser' }, { key: 'detail', label: 'Strategy detail' }]),
+      navDrafting: nav([{ key: 'personalise', label: 'Personalise draft' }, { key: 'output', label: 'Output view' }]),
+      navParticipant: nav([{ key: 'profile', label: 'Profile' }]),
+      navAccount: nav([{ key: 'paywall', label: 'Upgrade to Pro' }, { key: 'errors', label: 'Error states' }]),
+      screenTitle: titles[s],
+      isBrowser: s === 'browser', isDetail: s === 'detail', isPersonalise: s === 'personalise',
+      isOutput: s === 'output', isProfile: s === 'profile', isPaywall: s === 'paywall', isErrors: s === 'errors',
+      strategies: this.strategiesData.map(st => ({ ...st, onClick: () => this.go('detail') })),
+      revealed: this.state.revealed,
+      notRevealed: !this.state.revealed,
+      generateLabel: this.state.revealed ? 'Regenerate draft' : 'Generate draft',
+      onGenerate: () => this.setState({ revealed: true }),
+      onReset: () => this.setState({ revealed: false }),
+      goProfile: e => { e.preventDefault(); this.go('profile'); },
+      goOutput: () => this.go('output')
+    };
+  }
+}
+
+</script>
+</body>
+</html>

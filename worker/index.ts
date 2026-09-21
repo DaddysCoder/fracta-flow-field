@@ -9,6 +9,17 @@ import {
   verifyStripeWebhookSignature,
 } from './lib/stripe';
 import { findEmailByCustomerId, getEntitlement, getStoredCustomerId, setEntitlement, storeCustomerId } from './lib/entitlement';
+import {
+  buildAuthorizeUrl,
+  createConnectState,
+  exchangeCodeForToken,
+  getConnection,
+  getProviderConfig,
+  isSuiteProvider,
+  removeConnection,
+  storeConnection,
+  verifyConnectState,
+} from './lib/suite-connect';
 
 function json(data: unknown, init: ResponseInit = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -125,6 +136,64 @@ async function handleStripeWebhook(request: Request, env: Env): Promise<Response
   return json({ received: true });
 }
 
+function connectRedirectUri(env: Env, provider: string): string {
+  return `${env.APP_ORIGIN}/api/connect/${provider}/callback`;
+}
+
+async function handleConnectStart(request: Request, env: Env, provider: string): Promise<Response> {
+  if (!isSuiteProvider(provider)) return json({ error: 'Unknown suite product.' }, { status: 404 });
+  const email = await requireEmail(request, env);
+  if (!email) return json({ error: 'Sign in required.' }, { status: 401 });
+
+  const config = getProviderConfig(env, provider);
+  if (!config) {
+    return json(
+      { error: `Connecting ${provider === 'frame' ? 'Frame' : 'Vector'} isn't set up yet — its OAuth app hasn't been configured on this deployment.` },
+      { status: 501 },
+    );
+  }
+
+  const state = await createConnectState(email, provider, env.SESSION_SECRET);
+  const url = buildAuthorizeUrl(config, connectRedirectUri(env, provider), state);
+  return json({ url });
+}
+
+async function handleConnectCallback(request: Request, env: Env, provider: string, url: URL): Promise<Response> {
+  if (!isSuiteProvider(provider)) return json({ error: 'Unknown suite product.' }, { status: 404 });
+
+  const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
+  if (!code || !state) return json({ error: 'Missing code or state.' }, { status: 400 });
+
+  const payload = await verifyConnectState(state, env.SESSION_SECRET);
+  if (!payload || payload.provider !== provider) return json({ error: 'Invalid or expired connect request.' }, { status: 400 });
+
+  const config = getProviderConfig(env, provider);
+  if (!config) return json({ error: 'Not configured.' }, { status: 501 });
+
+  const token = await exchangeCodeForToken(config, code, connectRedirectUri(env, provider));
+  await storeConnection(env, payload.email, provider, token);
+
+  return Response.redirect(`${env.APP_ORIGIN}/profile?connected=${provider}`, 302);
+}
+
+async function handleConnectStatus(request: Request, env: Env): Promise<Response> {
+  const email = await requireEmail(request, env);
+  if (!email) return json({ error: 'Sign in required.' }, { status: 401 });
+
+  const [frame, vector] = await Promise.all([getConnection(env, email, 'frame'), getConnection(env, email, 'vector')]);
+  return json({ frame, vector });
+}
+
+async function handleConnectDisconnect(request: Request, env: Env, provider: string): Promise<Response> {
+  if (!isSuiteProvider(provider)) return json({ error: 'Unknown suite product.' }, { status: 404 });
+  const email = await requireEmail(request, env);
+  if (!email) return json({ error: 'Sign in required.' }, { status: 401 });
+
+  await removeConnection(env, email, provider);
+  return json({ ok: true });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -137,6 +206,17 @@ export default {
         if (request.method === 'POST' && url.pathname === '/api/checkout') return await handleCheckout(request, env);
         if (request.method === 'POST' && url.pathname === '/api/billing-portal') return await handleBillingPortal(request, env);
         if (request.method === 'POST' && url.pathname === '/api/webhook/stripe') return await handleStripeWebhook(request, env);
+
+        const connectStartMatch = url.pathname.match(/^\/api\/connect\/([\w-]+)\/start$/);
+        if (request.method === 'POST' && connectStartMatch) return await handleConnectStart(request, env, connectStartMatch[1]);
+
+        const connectCallbackMatch = url.pathname.match(/^\/api\/connect\/([\w-]+)\/callback$/);
+        if (request.method === 'GET' && connectCallbackMatch) return await handleConnectCallback(request, env, connectCallbackMatch[1], url);
+
+        if (request.method === 'GET' && url.pathname === '/api/connect/status') return await handleConnectStatus(request, env);
+
+        const connectDisconnectMatch = url.pathname.match(/^\/api\/connect\/([\w-]+)\/disconnect$/);
+        if (request.method === 'POST' && connectDisconnectMatch) return await handleConnectDisconnect(request, env, connectDisconnectMatch[1]);
       } catch (err) {
         console.error(err);
         return json({ error: 'Something went wrong. Try again shortly.' }, { status: 500 });

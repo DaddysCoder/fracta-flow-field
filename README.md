@@ -7,9 +7,16 @@ is no model call in this flow — every word a practitioner reads was written by
 person ahead of time. Every match sits next to a permanent, unlocked mechanism +
 citation.
 
-This app implements the seven screens from the `design_handoff_field` design
-package pixel-for-pixel where feasible, using the design tokens (color, type,
-spacing, motion) documented there.
+This app implements the seven screens from the `design_handoff_field` /
+`design_handoff_field_app` design packages pixel-for-pixel where feasible,
+using the design tokens (color, type, spacing, motion) documented there —
+including the fixed 236px left sidebar (grouped LIBRARY / PARTICIPANT /
+ACCOUNT nav + account chip) and top search bar from the later
+`design_handoff_field_app` handoff. Screens reachable only with a strategy
+id (Strategy detail, Personalise draft, Output view) aren't top-level
+sidebar destinations, unlike the flat nav list in that handoff's prototype —
+they're reached from strategy cards and the in-page links between screens,
+same as before.
 
 ## Stack
 
@@ -43,15 +50,21 @@ subscription (see "Auth & billing" below).
   Personalisation Flow (capacity note → match variant → review, with the
   Upgrade Moment and the three error states as sub-states of this screen),
   Output View, and Intake/Profile.
-- `src/components` — shared UI: the mechanism + citation unit, evidence badges,
-  the superseded band, strategy cards, `AuthModal` (email + one-time code).
+- `src/components` — shared UI: `Sidebar` (the fixed 236px nav + account chip)
+  and `TopBar` (screen title + the "Search strategies..." box — only the
+  Strategy Browser reads it, via `useSearch()`), the mechanism + citation
+  unit, evidence badges, the superseded band, strategy cards, `AuthModal`
+  (email + one-time code), `SuiteConnectRow` (the paywall's "Connect Frame" /
+  "Connect Vector" buttons).
 - `src/state/auth.tsx` — `useAuth()`: sign-in state, the Pro/Free `plan` (from
   the Worker's `/api/entitlement`, not a local flag), `checkout()` /
   `manageBilling()` (redirect to Stripe Checkout / Billing Portal).
 - `worker/` — the Cloudflare Worker: email one-time-code auth (signed,
   stateless session tokens — no session store), Stripe Checkout/Billing Portal
-  session creation, and the Stripe webhook that keeps entitlement state in KV.
-  See `worker/index.ts` for the route list.
+  session creation, the Stripe webhook that keeps entitlement state in KV, and
+  the Frame/Vector "connect" OAuth scaffold (`worker/lib/suite-connect.ts` —
+  see "Connecting Frame/Vector" below). See `worker/index.ts` for the route
+  list.
 
 ## Running
 
@@ -110,20 +123,42 @@ If a secret is ever pasted somewhere it could be logged (chat, a shared
 terminal, a committed file), rotate it in the provider's dashboard before
 using it — treat it as already compromised.
 
+## Connecting Frame/Vector
+
+The paywall's "Connect Frame" / "Connect Vector" buttons (`SuiteConnectRow`)
+call a real OAuth-redirect scaffold, not a placeholder — `POST
+/api/connect/:provider/start` (`worker/index.ts`) builds the authorize URL,
+a signed state token binds the flow to the signed-in email
+(`worker/lib/suite-connect.ts`), and `GET /api/connect/:provider/callback`
+exchanges the code and stores the connection in KV. What's missing is each
+product's actual OAuth app — set `FRAME_OAUTH_CLIENT_ID` /
+`_AUTHORIZE_URL` / `_TOKEN_URL` / `_SCOPE` (non-secret, `wrangler.jsonc`
+`vars`) and `FRAME_OAUTH_CLIENT_SECRET` (`wrangler secret put`), same for
+`VECTOR_OAUTH_*`, once Frame/Vector have one to point at. Until then,
+`getProviderConfig()` treats the provider as unconfigured and `/start`
+returns a 501 the button surfaces inline rather than pretending to connect.
+
 ## Not in this pass
 
-- **Variant content.** `strategies.ts` ships two placeholder variants per
-  strategy so the matching logic has something real to score — the actual
-  wording is a content-authoring task, not a coding one.
+- **Variant content is the real gap right now, not the matching logic.**
+  Every strategy in `strategies.ts` ships exactly two placeholder
+  `personalisationRecords` — enough for `matchPersonalisedVariant()` to have
+  something real to score, not real coverage. The scoring/abstain/tie-break
+  logic in `src/ai/personalise.ts` doesn't need rework; it needs more
+  variants to work with (more comfort-threshold and communication-method
+  combinations per strategy) and more literature, particularly for the
+  thinner Sensory and Access-to-tangibles strategies — both currently
+  Practice-based/Emerging tier with a single source each. This is a
+  content-authoring task, not a coding one.
 - **Optional "smart match" worker.** If a strategy ends up with many
   overlapping variants and local scoring can't confidently pick one, a
   Cloudflare Worker using Anthropic strictly as a *classifier* (forced
   `tool_choice` over an enum of the candidate variant IDs — it can only pick
   one of the IDs given, never write new text) is worth adding. Not built
   because local scoring hasn't shown a need for it yet.
-- Stripe subscription + customer portal, a lightweight account model gating
-  the personalise button, wiring `suite-detection.ts` to the real Frame
-  cross-tool-read mechanism, and (only if the optional worker above is ever
-  built) the Anthropic enterprise API migration for moderation tuning. None of
-  these touch the mechanism-lock or citation-pairing rules encoded here —
-  those are intentional constraints, not gaps.
+- Wiring `suite-detection.ts` to the real Frame cross-tool-read mechanism,
+  and giving the Frame/Vector connect scaffold above real OAuth apps to
+  point at, and (only if the optional worker above is ever built) the
+  Anthropic enterprise API migration for moderation tuning. None of these
+  touch the mechanism-lock or citation-pairing rules encoded here — those
+  are intentional constraints, not gaps.

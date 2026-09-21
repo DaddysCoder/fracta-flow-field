@@ -4,6 +4,7 @@ import type { BehaviourFunction, EvidenceTier } from '../lib/strategy-library/ty
 import { StrategyCard } from '../components/StrategyCard';
 import { SupersededBand } from '../components/SupersededBand';
 import { EvidenceTierFilter } from '../components/EvidenceBadge';
+import { useSearch } from '../state/search';
 
 const FUNCTIONS: BehaviourFunction[] = [
   'Attention',
@@ -19,6 +20,7 @@ export function StrategyBrowser() {
     () => new Set(),
   );
   const [tier, setTier] = useState<EvidenceTier | null>(null);
+  const { query } = useSearch();
 
   function toggleFunction(fn: BehaviourFunction) {
     setSelectedFunctions((prev) => {
@@ -35,15 +37,16 @@ export function StrategyBrowser() {
       if (tab === 'function' && s.responsive) return false;
       if (selectedFunctions.size > 0 && !selectedFunctions.has(s.function)) return false;
       if (tier && s.evidenceTier !== tier) return false;
+      if (query.trim() && !s.name.toLowerCase().includes(query.trim().toLowerCase())) return false;
       return true;
     });
-  }, [tab, selectedFunctions, tier]);
+  }, [tab, selectedFunctions, tier, query]);
 
   const superseded = visible.filter((s) => s.supersededInfo);
   const rest = visible.filter((s) => !s.supersededInfo);
 
   return (
-    <div className="px-5 sm:px-14 pt-32 pb-24 max-w-[1040px] mx-auto">
+    <div className="px-10 pt-9 pb-16 max-w-[1000px] mx-auto">
       <div className="font-mono text-[11.5px] tracking-[0.1em] text-accent font-medium mb-4">
         STRATEGY LIBRARY
       </div>

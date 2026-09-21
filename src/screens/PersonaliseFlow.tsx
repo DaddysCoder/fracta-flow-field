@@ -59,7 +59,7 @@ export function PersonaliseFlow() {
 
   if (!strategy) {
     return (
-      <div className="px-5 sm:px-14 pt-32 max-w-[1040px] mx-auto">
+      <div className="px-10 pt-9 max-w-[1000px] mx-auto">
         <p className="text-secondary">Strategy not found.</p>
       </div>
     );
@@ -117,7 +117,7 @@ export function PersonaliseFlow() {
   const revealDuration = reducedMotion ? '1ms' : '220ms';
 
   return (
-    <div className="px-5 sm:px-14 py-24 max-w-[1040px] mx-auto">
+    <div className="px-10 pt-9 pb-16 max-w-[1000px] mx-auto">
       <div className="font-mono text-[11.5px] tracking-[0.1em] text-accent font-medium mb-4">
         PERSONALISATION FLOW
       </div>
@@ -163,6 +163,9 @@ export function PersonaliseFlow() {
                 disabled={state.status === 'loading'}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-btn bg-accent text-white text-[13.5px] font-semibold focus-ring hover:bg-accent-hover active:scale-[0.97] transition-all duration-100 disabled:opacity-60"
               >
+                <span className="font-mono text-[9px] font-semibold tracking-wide bg-white/20 px-1.5 py-0.5 rounded">
+                  LOGIC
+                </span>
                 {state.status === 'loading' ? 'Matching…' : generateLabel}
               </button>
               {import.meta.env.DEV && (

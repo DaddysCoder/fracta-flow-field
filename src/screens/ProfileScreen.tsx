@@ -39,7 +39,7 @@ export function ProfileScreen() {
   }
 
   return (
-    <div className="px-5 sm:px-14 py-24 max-w-[1040px] mx-auto">
+    <div className="px-10 pt-9 pb-16 max-w-[1000px] mx-auto">
       <div className="font-mono text-[11.5px] tracking-[0.1em] text-accent font-medium mb-4">
         INTAKE VS. PROFILE
       </div>
