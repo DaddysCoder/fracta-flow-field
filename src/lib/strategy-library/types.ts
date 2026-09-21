@@ -27,7 +27,16 @@ export type BehaviourFunction =
   | 'Escape/avoidance'
   | 'Sensory'
   | 'Access to tangibles'
-  | 'Communication';
+  | 'Communication'
+  /**
+   * Automatic (non-socially-mediated) reinforcement — the behaviour's
+   * consequence is produced by the behaviour itself, not by another
+   * person. Kept distinct from 'Sensory': a generic sensory activity
+   * (`sensory-diet`) is not equivalent to an individually validated
+   * competing stimulus for automatically reinforced challenging
+   * behaviour (`competing-stimulus-access`) — see EVIDENCE.md.
+   */
+  | 'Automatic';
 
 /** Display-facing "figure was updated" summary — kept as-is from the pre-alignment schema; still shown by `SupersededBand`. */
 export interface SupersededInfo {
@@ -38,6 +47,20 @@ export interface SupersededInfo {
 export type ComfortLevel = 'low' | 'medium' | 'high';
 
 export type ApprovalStatus = 'draft' | 'pending-review' | 'approved' | 'retired';
+
+/**
+ * Whether a strategy needs the extra confirmation step in
+ * `IntrusiveProcedureGate` before its mechanism/citation/personalisation are
+ * shown. Absent/`'standard'` = no gate. Every strategy seeded in
+ * `strategies.ts` today is `'standard'` — nothing currently in this library
+ * needs it — but the field and its enforcement are real: a future strategy
+ * such as escape extinction or RIRD would be seeded `'more-intrusive'` and
+ * `approvalStatus: 'pending-review'`, and would then need both a reviewer to
+ * approve it AND every practitioner session to explicitly confirm less
+ * intrusive options were tried before it's shown — never a default,
+ * first-line suggestion. See EVIDENCE.md.
+ */
+export type IntrusivenessTier = 'standard' | 'more-intrusive';
 
 /**
  * A pre-authored delivery-wording template for one strategy, tagged for local
@@ -67,7 +90,44 @@ export interface PersonalisationRecord {
     interests?: string[];
     communicationMethod?: string[];
     comfortThreshold?: ComfortLevel;
+    /**
+     * Which behavioural-function context this wording was authored for, on
+     * a canonical strategy that applies across more than one function (see
+     * `StrategyTemplate.applicableFunctions`) — e.g. FCT's "request break"
+     * wording is tagged `'Escape/avoidance'`, "request item" tagged
+     * `'Access to tangibles'`. `matchPersonalisedVariant` treats this as a
+     * hard filter, not a soft-scored preference like the fields above: a
+     * variant written for the wrong function is never an acceptable match,
+     * so it's excluded before scoring rather than merely scored lower.
+     * Absent on strategies with only one applicable function.
+     */
+    function?: BehaviourFunction;
   };
+}
+
+export type EvidenceType =
+  | 'systematic-review'
+  | 'meta-analysis'
+  | 'narrative-review'
+  | 'scoping-review'
+  | 'single-case'
+  | 'treatment-package';
+
+/**
+ * One source backing a strategy's evidence claim, with enough metadata to
+ * tell reviewers what kind of evidence it is — a systematic review/meta-
+ * analysis is not interchangeable with a single-case study or a component
+ * evaluated only inside a multicomponent treatment package. `citation`/
+ * `citationShort` on `StrategyTemplate` stay the single "permanent source"
+ * shown by `MechanismCitationUnit`; `evidenceSources` is the fuller record
+ * for strategies backed by more than one source (see EVIDENCE.md).
+ */
+export interface EvidenceSource {
+  citation: string;
+  citationShort: string;
+  evidenceType: EvidenceType;
+  doi?: string;
+  pmid?: string;
 }
 
 /**
@@ -85,12 +145,25 @@ export interface StrategyTemplate {
   shortDescription: string;
   evidenceTier: EvidenceTier;
   evidenceAuthorityTier: EvidenceAuthorityTier;
+  /** Primary/historical behavioural function this strategy is filed under. */
   function: BehaviourFunction;
+  /**
+   * Every function this canonical strategy is genuinely applicable to,
+   * including `function`. Absent means "just `function`" — most strategies
+   * don't need this. Set it on a strategy whose intervention is the same
+   * technique across functions (e.g. FCT) so it surfaces under every
+   * relevant function filter instead of being duplicated as separate
+   * strategies per function. Read via `applicableFunctionsOf()`, never
+   * `.function` directly, anywhere this matters (filtering, display).
+   */
+  applicableFunctions?: BehaviourFunction[];
   /** True when this is a responsive strategy rather than a function-based one. */
   responsive: boolean;
   mechanism: string;
   citation: string;
   citationShort: string;
+  /** Full evidence record when more than one source backs this strategy — see `EvidenceSource`. */
+  evidenceSources?: EvidenceSource[];
   howToUse: string[];
   /** Age band this template is written for, if restricted. Absent = no age restriction. */
   ageRange?: { minAge?: number; maxAge?: number };
@@ -98,6 +171,8 @@ export interface StrategyTemplate {
   culturalSafetyNotes?: string;
   /** Display-facing summary shown by `SupersededBand` when this template has updated figures/guidance. */
   supersededInfo?: SupersededInfo;
+  /** Absent/`'standard'` = no gate. See `IntrusivenessTier`. */
+  intrusivenessTier?: IntrusivenessTier;
   personalisationRecords: PersonalisationRecord[];
 
   // --- Governance fields (evidence-layer alignment) ---
@@ -110,6 +185,28 @@ export interface StrategyTemplate {
   current: boolean;
   /** `templateId` of the version that supersedes this one, if any. */
   supersededBy?: string;
+}
+
+/** Every function a strategy is applicable to — `applicableFunctions` when set, else just `function`. */
+export function applicableFunctionsOf(strategy: StrategyTemplate): BehaviourFunction[] {
+  return strategy.applicableFunctions ?? [strategy.function];
+}
+
+/**
+ * The FIELD gating model's approval gate: a strategy is only ever shown to a
+ * practitioner (browse, detail, personalise, direct link) when it's both
+ * `approved` and `current`. `draft`/`pending-review`/`retired` strategies,
+ * or a superseded (`current: false`) version, are treated identically to
+ * "doesn't exist" everywhere in this app — see `getStrategyById` and
+ * `listVisibleStrategies` in `strategies.ts`.
+ */
+export function isApprovedCurrent(strategy: StrategyTemplate): boolean {
+  return strategy.approvalStatus === 'approved' && strategy.current;
+}
+
+/** The FIELD gating model's intrusiveness gate: true when `IntrusiveProcedureGate` must confirm before showing this strategy's content. */
+export function requiresIntrusiveGate(strategy: StrategyTemplate): boolean {
+  return strategy.intrusivenessTier === 'more-intrusive';
 }
 
 /**

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getStrategyById } from '../lib/strategy-library/strategies';
+import { applicableFunctionsOf, requiresIntrusiveGate, type BehaviourFunction } from '../lib/strategy-library/types';
 import { MechanismCitationUnit } from '../components/MechanismCitationUnit';
+import { IntrusiveProcedureGate } from '../components/IntrusiveProcedureGate';
 import { UpgradeMoment } from '../components/UpgradeMoment';
 import { AmbiguousMatchCard, PersonaliseErrorCard } from '../components/ErrorStates';
 import { useAuth } from '../state/auth';
@@ -42,6 +44,7 @@ export function PersonaliseFlow() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [simulate, setSimulate] = useState<PersonaliseSimulation>('success');
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [targetFunction, setTargetFunction] = useState<BehaviourFunction | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -65,17 +68,23 @@ export function PersonaliseFlow() {
     );
   }
 
+  const functions = applicableFunctionsOf(strategy);
+  const needsFunctionChoice = functions.length > 1;
+  const effectiveFunction = needsFunctionChoice ? targetFunction ?? undefined : functions[0];
+
   async function handleGenerate() {
     if (plan === 'free') {
       setShowUpgrade(true);
       return;
     }
+    if (needsFunctionChoice && !targetFunction) return;
     setState({ status: 'loading' });
     try {
       const match = requestPersonalisedVariant(
         strategy!,
         profile,
         import.meta.env.DEV ? simulate : undefined,
+        effectiveFunction,
       );
       setState({
         status: 'revealed',
@@ -116,20 +125,8 @@ export function PersonaliseFlow() {
   const generateLabel = state.status === 'revealed' ? 'Re-match variant' : 'Match variant';
   const revealDuration = reducedMotion ? '1ms' : '220ms';
 
-  return (
-    <div className="px-10 pt-9 pb-16 max-w-[1000px] mx-auto">
-      <div className="font-mono text-[11.5px] tracking-[0.1em] text-accent font-medium mb-4">
-        PERSONALISATION FLOW
-      </div>
-      <h1 className="font-bold text-[clamp(26px,3.4vw,34px)] tracking-tight mb-2.5">
-        A draft to review, never the final word.
-      </h1>
-      <p className="text-[15px] text-secondary mb-10 max-w-[600px] leading-relaxed">
-        Capacity note, then an optional matched draft, then a review step that&apos;s always editable
-        before saving &mdash; for <span className="font-semibold text-ink-soft">{strategy.name}</span>.
-      </p>
-      <ProfessionalToolDisclaimer className="mb-10 max-w-[600px]" />
-
+  const body = (
+    <>
       <div className="grid gap-8 mb-12" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
         <div className="bg-white rounded-card p-[22px] shadow-card">
           <div className="font-mono text-[11px] font-semibold tracking-wide text-tertiary mb-2.5">
@@ -157,10 +154,33 @@ export function PersonaliseFlow() {
           </p>
           {missingFields.length === 0 ? (
             <>
+              {needsFunctionChoice && (
+                <div className="mb-3.5">
+                  <div className="text-[12.5px] font-semibold text-ink-soft mb-1.5">
+                    Which function is this for, for this participant?
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {functions.map((fn) => (
+                      <button
+                        key={fn}
+                        type="button"
+                        onClick={() => setTargetFunction(fn)}
+                        className={`px-2.5 py-1.5 rounded-lg text-[12px] font-semibold focus-ring ${
+                          targetFunction === fn
+                            ? 'bg-ink text-white'
+                            : 'bg-white border border-border text-muted hover:text-ink'
+                        }`}
+                      >
+                        {fn}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={handleGenerate}
-                disabled={state.status === 'loading'}
+                disabled={state.status === 'loading' || (needsFunctionChoice && !targetFunction)}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-btn bg-accent text-white text-[13.5px] font-semibold focus-ring hover:bg-accent-hover active:scale-[0.97] transition-all duration-100 disabled:opacity-60"
               >
                 <span className="font-mono text-[9px] font-semibold tracking-wide bg-white/20 px-1.5 py-0.5 rounded">
@@ -268,6 +288,30 @@ export function PersonaliseFlow() {
           </div>
           <MechanismCitationUnit mechanism={strategy.mechanism} citation={strategy.citationShort} />
         </div>
+      )}
+    </>
+  );
+
+  return (
+    <div className="px-10 pt-9 pb-16 max-w-[1000px] mx-auto">
+      <div className="font-mono text-[11.5px] tracking-[0.1em] text-accent font-medium mb-4">
+        PERSONALISATION FLOW
+      </div>
+      <h1 className="font-bold text-[clamp(26px,3.4vw,34px)] tracking-tight mb-2.5">
+        A draft to review, never the final word.
+      </h1>
+      <p className="text-[15px] text-secondary mb-10 max-w-[600px] leading-relaxed">
+        Capacity note, then an optional matched draft, then a review step that&apos;s always editable
+        before saving &mdash; for <span className="font-semibold text-ink-soft">{strategy.name}</span>.
+      </p>
+      <ProfessionalToolDisclaimer className="mb-10 max-w-[600px]" />
+
+      {requiresIntrusiveGate(strategy) ? (
+        <IntrusiveProcedureGate strategyId={strategy.id} strategyName={strategy.name}>
+          {body}
+        </IntrusiveProcedureGate>
+      ) : (
+        body
       )}
 
       <div className="mt-8">

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { STRATEGIES } from '../lib/strategy-library/strategies';
-import type { BehaviourFunction, EvidenceTier } from '../lib/strategy-library/types';
+import { listVisibleStrategies } from '../lib/strategy-library/strategies';
+import { applicableFunctionsOf, type BehaviourFunction, type EvidenceTier } from '../lib/strategy-library/types';
 import { StrategyCard } from '../components/StrategyCard';
 import { SupersededBand } from '../components/SupersededBand';
 import { EvidenceTierFilter } from '../components/EvidenceBadge';
@@ -12,6 +12,7 @@ const FUNCTIONS: BehaviourFunction[] = [
   'Sensory',
   'Access to tangibles',
   'Communication',
+  'Automatic',
 ];
 
 export function StrategyBrowser() {
@@ -32,10 +33,10 @@ export function StrategyBrowser() {
   }
 
   const visible = useMemo(() => {
-    return STRATEGIES.filter((s) => {
+    return listVisibleStrategies().filter((s) => {
       if (tab === 'responsive' && !s.responsive) return false;
       if (tab === 'function' && s.responsive) return false;
-      if (selectedFunctions.size > 0 && !selectedFunctions.has(s.function)) return false;
+      if (selectedFunctions.size > 0 && !applicableFunctionsOf(s).some((fn) => selectedFunctions.has(fn))) return false;
       if (tier && s.evidenceTier !== tier) return false;
       if (query.trim() && !s.name.toLowerCase().includes(query.trim().toLowerCase())) return false;
       return true;

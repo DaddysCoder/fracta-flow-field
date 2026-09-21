@@ -138,18 +138,58 @@ product's actual OAuth app — set `FRAME_OAUTH_CLIENT_ID` /
 `getProviderConfig()` treats the provider as unconfigured and `/start`
 returns a 501 the button surfaces inline rather than pretending to connect.
 
+## Evidence library
+
+`strategies.ts` now has 12 strategies (3 added: `competing-stimulus-access`,
+`choice-task-adaptation`, `demand-fading`) and one canonical strategy that
+spans functions without duplication (`fct`, via `StrategyTemplate.
+applicableFunctions` + `PersonalisationRecord.tags.function` — see
+`applicableFunctionsOf()` in `types.ts`). Full citation metadata (including
+DOI, evidence type — systematic review vs. meta-analysis vs. single-case vs.
+package evidence — via `StrategyTemplate.evidenceSources`) and the QA report
+for that integration pass (strategies added/modified, tiers and why, what
+literature was checked against its actual conclusions rather than assumed,
+and what was deliberately *not* built) are in **EVIDENCE.md**.
+
+## Gating model
+
+Two gates, both enforced in code (not just typed):
+
+- **Approval gate** — `getStrategyById()` and `listVisibleStrategies()` in
+  `strategies.ts` only ever return a strategy that's `approvalStatus:
+  'approved'` and `current: true` (checked via `isApprovedCurrent()` in
+  `types.ts`). A `draft`/`pending-review`/`retired` strategy is invisible
+  everywhere, including by direct URL. Every strategy shipped today is
+  `approved`, so this is currently a no-op on real data — it's there for
+  the next strategy that isn't.
+- **Intrusiveness gate** — set `intrusivenessTier: 'more-intrusive'` on a
+  `StrategyTemplate` and `StrategyDetail`/`PersonaliseFlow` wrap its
+  mechanism/citation/personalisation behind `IntrusiveProcedureGate`,
+  requiring an explicit per-session confirmation
+  ("less intrusive options have genuinely been tried first...") before any
+  of that content shows. Nothing seeded today sets this — see EVIDENCE.md's
+  "Gating model" section for how it was verified and why it matters for a
+  future escape-extinction/RIRD-type strategy.
+
 ## Not in this pass
 
-- **Variant content is the real gap right now, not the matching logic.**
-  Every strategy in `strategies.ts` ships exactly two placeholder
-  `personalisationRecords` — enough for `matchPersonalisedVariant()` to have
-  something real to score, not real coverage. The scoring/abstain/tie-break
-  logic in `src/ai/personalise.ts` doesn't need rework; it needs more
-  variants to work with (more comfort-threshold and communication-method
-  combinations per strategy) and more literature, particularly for the
-  thinner Sensory and Access-to-tangibles strategies — both currently
-  Practice-based/Emerging tier with a single source each. This is a
+- **Variant content is still the main content gap.** Most strategies in
+  `strategies.ts` still ship exactly two placeholder `personalisationRecords`
+  — enough for `matchPersonalisedVariant()` to have something real to score,
+  not real coverage. `fct` and the three strategies added in the evidence
+  pass got more (see EVIDENCE.md); `sensory-diet`, `choice-tangibles`,
+  `aac-request`, `redirect`, `debrief` and `high-prob` didn't. The
+  scoring/abstain/tie-break logic in `src/ai/personalise.ts` doesn't need
+  rework; it needs more variants to work with (more comfort-threshold and
+  communication-method combinations per strategy) and, for Sensory and
+  Access-to-tangibles specifically, more/stronger literature — both are
+  still Practice-based/Emerging tier with a single source each. This is a
   content-authoring task, not a coding one.
+- **`EligibilityFilters.excludedSupportTypes` is still not read anywhere.**
+  `approvalStatus` (the approval gate) and `intrusivenessTier` (the
+  intrusiveness gate) — the FIELD gating model — are now enforced, see
+  "Gating model" below. This one field is a separate, participant-level
+  exclusion list with no concrete case yet to build against.
 - **Optional "smart match" worker.** If a strategy ends up with many
   overlapping variants and local scoring can't confidently pick one, a
   Cloudflare Worker using Anthropic strictly as a *classifier* (forced

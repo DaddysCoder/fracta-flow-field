@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import type { StrategyTemplate } from '../lib/strategy-library/types';
+import { applicableFunctionsOf, type StrategyTemplate } from '../lib/strategy-library/types';
 import { EvidenceBadge, FunctionTag } from './EvidenceBadge';
 
 export function StrategyCard({ strategy }: { strategy: StrategyTemplate }) {
@@ -14,7 +14,7 @@ export function StrategyCard({ strategy }: { strategy: StrategyTemplate }) {
       </div>
       <div className="flex gap-2.5 items-start flex-none pt-0.5">
         <EvidenceBadge tier={strategy.evidenceTier} />
-        <FunctionTag label={strategy.function} />
+        <FunctionTag label={applicableFunctionsOf(strategy).join(' · ')} />
       </div>
     </Link>
   );

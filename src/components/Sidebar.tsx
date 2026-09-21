@@ -39,7 +39,7 @@ function AccountChip() {
     <div className="relative">
       <button
         type="button"
-        onClick={() => (status === 'signed-in' ? setOpen((v) => !v) : setAuthModalOpen(true))}
+        onClick={() => (status === 'signed-in' || devSetPlan ? setOpen((v) => !v) : setAuthModalOpen(true))}
         className="w-full flex items-center gap-2.5 px-2.5 py-3 rounded-lg focus-ring hover:bg-surface transition-colors duration-150"
       >
         <span className="w-7 h-7 rounded-full bg-ink text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">
@@ -53,7 +53,7 @@ function AccountChip() {
         </span>
       </button>
 
-      {open && status === 'signed-in' && (
+      {open && (status === 'signed-in' || devSetPlan) && (
         <div className="absolute bottom-full left-0 mb-1.5 w-full bg-white border border-border rounded-lg shadow-card p-1.5 text-xs">
           {devSetPlan && (
             <button
@@ -64,7 +64,7 @@ function AccountChip() {
               Dev: force {plan === 'pro' ? 'Free' : 'Pro'}
             </button>
           )}
-          {plan === 'pro' && (
+          {status === 'signed-in' && plan === 'pro' && (
             <button
               type="button"
               onClick={() => void manageBilling()}
@@ -73,13 +73,26 @@ function AccountChip() {
               Manage billing
             </button>
           )}
-          <button
-            type="button"
-            onClick={signOut}
-            className="w-full text-left px-2.5 py-2 rounded focus-ring hover:bg-surface text-ink-soft"
-          >
-            Sign out
-          </button>
+          {status === 'signed-in' ? (
+            <button
+              type="button"
+              onClick={signOut}
+              className="w-full text-left px-2.5 py-2 rounded focus-ring hover:bg-surface text-ink-soft"
+            >
+              Sign out
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                setAuthModalOpen(true);
+              }}
+              className="w-full text-left px-2.5 py-2 rounded focus-ring hover:bg-surface text-ink-soft"
+            >
+              Sign in
+            </button>
+          )}
         </div>
       )}
       {authModalOpen && <AuthModal onClose={() => setAuthModalOpen(false)} />}

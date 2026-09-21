@@ -1,6 +1,17 @@
 import { Link, useParams } from 'react-router-dom';
 import { getStrategyById } from '../lib/strategy-library/strategies';
+import { applicableFunctionsOf, requiresIntrusiveGate, type EvidenceType } from '../lib/strategy-library/types';
 import { EvidenceBadge, FunctionTag } from '../components/EvidenceBadge';
+import { IntrusiveProcedureGate } from '../components/IntrusiveProcedureGate';
+
+const EVIDENCE_TYPE_LABELS: Record<EvidenceType, string> = {
+  'systematic-review': 'Systematic review',
+  'meta-analysis': 'Meta-analysis',
+  'narrative-review': 'Narrative review',
+  'scoping-review': 'Scoping review',
+  'single-case': 'Single-case experimental',
+  'treatment-package': 'Treatment package component',
+};
 
 export function StrategyDetail() {
   const { id } = useParams();
@@ -29,49 +40,82 @@ export function StrategyDetail() {
         Never behind a collapsed section.
       </p>
 
-      <div className="bg-white rounded-card-lg p-6 sm:p-9 max-w-[760px] shadow-card">
-        <div className="flex gap-3 mb-4">
-          <EvidenceBadge tier={strategy.evidenceTier} />
-          <FunctionTag label={strategy.function} />
-        </div>
-        <h2 className="font-bold text-2xl tracking-tight mb-6">{strategy.name}</h2>
+      {requiresIntrusiveGate(strategy) ? (
+        <IntrusiveProcedureGate strategyId={strategy.id} strategyName={strategy.name}>
+          <StrategyDetailCard strategy={strategy} />
+        </IntrusiveProcedureGate>
+      ) : (
+        <StrategyDetailCard strategy={strategy} />
+      )}
+    </div>
+  );
+}
 
-        <div className="mb-5">
-          <div className="font-mono text-[11px] tracking-[0.08em] text-tertiary font-medium mb-2">
-            MECHANISM
-          </div>
-          <div className="text-[15px] text-ink-soft leading-relaxed">{strategy.mechanism}</div>
-        </div>
+function StrategyDetailCard({ strategy }: { strategy: NonNullable<ReturnType<typeof getStrategyById>> }) {
+  return (
+    <div className="bg-white rounded-card-lg p-6 sm:p-9 max-w-[760px] shadow-card">
+      <div className="flex gap-3 mb-4">
+        <EvidenceBadge tier={strategy.evidenceTier} />
+        <FunctionTag label={applicableFunctionsOf(strategy).join(' · ')} />
+      </div>
+      <h2 className="font-bold text-2xl tracking-tight mb-6">{strategy.name}</h2>
 
-        <div className="bg-white border-[1.5px] border-accent rounded-xl px-5 py-[18px] my-6 shadow-mech">
-          <div className="font-mono text-[10.5px] tracking-[0.08em] text-accent font-semibold mb-2">
-            CITATION &middot; PERMANENT SOURCE
-          </div>
-          <div className="font-mono text-[12.5px] text-ink-soft leading-snug">
-            {strategy.citation}
-          </div>
+      <div className="mb-5">
+        <div className="font-mono text-[11px] tracking-[0.08em] text-tertiary font-medium mb-2">
+          MECHANISM
         </div>
+        <div className="text-[15px] text-ink-soft leading-relaxed">{strategy.mechanism}</div>
+      </div>
 
+      <div className="bg-white border-[1.5px] border-accent rounded-xl px-5 py-[18px] my-6 shadow-mech">
+        <div className="font-mono text-[10.5px] tracking-[0.08em] text-accent font-semibold mb-2">
+          CITATION &middot; PERMANENT SOURCE
+        </div>
+        <div className="font-mono text-[12.5px] text-ink-soft leading-snug">
+          {strategy.citation}
+        </div>
+      </div>
+
+      {strategy.evidenceSources && strategy.evidenceSources.length > 1 && (
         <div className="mb-6">
           <div className="font-mono text-[11px] tracking-[0.08em] text-tertiary font-medium mb-2.5">
-            HOW TO USE
+            EVIDENCE SOURCES
           </div>
-          <div className="flex flex-col gap-2 text-[14.5px] text-ink-soft leading-relaxed">
-            {strategy.howToUse.map((step, i) => (
-              <div key={i}>
-                {i + 1}. {step}
+          <div className="flex flex-col gap-2.5">
+            {strategy.evidenceSources.map((source, i) => (
+              <div key={i} className="text-[13px] text-ink-soft leading-snug">
+                <span className="font-mono text-[10.5px] text-accent font-semibold mr-1.5">
+                  {EVIDENCE_TYPE_LABELS[source.evidenceType]}
+                </span>
+                {source.citation}
+                {source.doi && (
+                  <span className="text-tertiary"> &middot; doi:{source.doi}</span>
+                )}
               </div>
             ))}
           </div>
         </div>
+      )}
 
-        <Link
-          to={`/strategy/${strategy.id}/personalise`}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-btn bg-accent text-white text-[13.5px] font-semibold focus-ring hover:bg-accent-hover transition-colors duration-100"
-        >
-          Personalise for a participant
-        </Link>
+      <div className="mb-6">
+        <div className="font-mono text-[11px] tracking-[0.08em] text-tertiary font-medium mb-2.5">
+          HOW TO USE
+        </div>
+        <div className="flex flex-col gap-2 text-[14.5px] text-ink-soft leading-relaxed">
+          {strategy.howToUse.map((step, i) => (
+            <div key={i}>
+              {i + 1}. {step}
+            </div>
+          ))}
+        </div>
       </div>
+
+      <Link
+        to={`/strategy/${strategy.id}/personalise`}
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-btn bg-accent text-white text-[13.5px] font-semibold focus-ring hover:bg-accent-hover transition-colors duration-100"
+      >
+        Personalise for a participant
+      </Link>
     </div>
   );
 }

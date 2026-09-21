@@ -1,5 +1,5 @@
 import type { ParticipantProfile } from '../lib/participant-profile/types';
-import type { ComfortLevel, PersonalisationRecord, StrategyTemplate } from '../lib/strategy-library/types';
+import type { BehaviourFunction, ComfortLevel, PersonalisationRecord, StrategyTemplate } from '../lib/strategy-library/types';
 
 /**
  * Local, deterministic personalisation: scores this strategy's pre-authored
@@ -132,12 +132,42 @@ export interface PersonalisedMatch {
   missingFields: string[];
 }
 
-export function matchPersonalisedVariant(strategy: StrategyTemplate, profile: ParticipantProfile): PersonalisedMatch {
-  const variants = strategy.personalisationRecords ?? [];
-  if (variants.length === 0) {
+/**
+ * A canonical strategy applicable to more than one function (e.g. FCT) tags
+ * some variants with the function they were written for — see
+ * `PersonalisationRecord.tags.function`. Unlike the soft-scored fields in
+ * `scoreVariant`, this is a hard filter: a variant written for the wrong
+ * function is never an acceptable match. Untagged variants (no function tag
+ * at all on any variant of this strategy) pass through unfiltered.
+ */
+function filterByFunction(
+  variants: PersonalisationRecord[],
+  targetFunction: BehaviourFunction | undefined,
+): PersonalisationRecord[] {
+  if (!targetFunction) return variants;
+  const anyTagged = variants.some((v) => v.tags.function);
+  if (!anyTagged) return variants;
+  return variants.filter((v) => !v.tags.function || v.tags.function === targetFunction);
+}
+
+export function matchPersonalisedVariant(
+  strategy: StrategyTemplate,
+  profile: ParticipantProfile,
+  targetFunction?: BehaviourFunction,
+): PersonalisedMatch {
+  const allVariants = strategy.personalisationRecords ?? [];
+  if (allVariants.length === 0) {
     throw new PersonaliseError(
       'no-variant-match',
       'No pre-authored variant exists for this strategy yet.',
+    );
+  }
+
+  const variants = filterByFunction(allVariants, targetFunction);
+  if (variants.length === 0) {
+    throw new PersonaliseError(
+      'no-variant-match',
+      'No pre-authored variant exists for this function yet.',
     );
   }
 
@@ -185,6 +215,7 @@ export function requestPersonalisedVariant(
   strategy: StrategyTemplate,
   profile: ParticipantProfile,
   simulate?: PersonaliseSimulation,
+  targetFunction?: BehaviourFunction,
 ): PersonalisedMatch {
   if (import.meta.env.DEV && simulate && simulate !== 'success') {
     if (simulate === 'no-variant-match') {
@@ -210,5 +241,5 @@ export function requestPersonalisedVariant(
     }
     throw new PersonaliseError('service', "The matching step didn't respond.");
   }
-  return matchPersonalisedVariant(strategy, profile);
+  return matchPersonalisedVariant(strategy, profile, targetFunction);
 }
