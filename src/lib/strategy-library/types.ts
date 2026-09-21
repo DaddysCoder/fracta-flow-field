@@ -49,6 +49,20 @@ export type ComfortLevel = 'low' | 'medium' | 'high';
 export type ApprovalStatus = 'draft' | 'pending-review' | 'approved' | 'retired';
 
 /**
+ * Whether a strategy needs the extra confirmation step in
+ * `IntrusiveProcedureGate` before its mechanism/citation/personalisation are
+ * shown. Absent/`'standard'` = no gate. Every strategy seeded in
+ * `strategies.ts` today is `'standard'` — nothing currently in this library
+ * needs it — but the field and its enforcement are real: a future strategy
+ * such as escape extinction or RIRD would be seeded `'more-intrusive'` and
+ * `approvalStatus: 'pending-review'`, and would then need both a reviewer to
+ * approve it AND every practitioner session to explicitly confirm less
+ * intrusive options were tried before it's shown — never a default,
+ * first-line suggestion. See EVIDENCE.md.
+ */
+export type IntrusivenessTier = 'standard' | 'more-intrusive';
+
+/**
  * A pre-authored delivery-wording template for one strategy, tagged for local
  * matching against a participant profile. No model ever writes new prose here
  * — `matchPersonalisedVariant` only ever fills the slots of whichever record
@@ -157,6 +171,8 @@ export interface StrategyTemplate {
   culturalSafetyNotes?: string;
   /** Display-facing summary shown by `SupersededBand` when this template has updated figures/guidance. */
   supersededInfo?: SupersededInfo;
+  /** Absent/`'standard'` = no gate. See `IntrusivenessTier`. */
+  intrusivenessTier?: IntrusivenessTier;
   personalisationRecords: PersonalisationRecord[];
 
   // --- Governance fields (evidence-layer alignment) ---
@@ -174,6 +190,23 @@ export interface StrategyTemplate {
 /** Every function a strategy is applicable to — `applicableFunctions` when set, else just `function`. */
 export function applicableFunctionsOf(strategy: StrategyTemplate): BehaviourFunction[] {
   return strategy.applicableFunctions ?? [strategy.function];
+}
+
+/**
+ * The FIELD gating model's approval gate: a strategy is only ever shown to a
+ * practitioner (browse, detail, personalise, direct link) when it's both
+ * `approved` and `current`. `draft`/`pending-review`/`retired` strategies,
+ * or a superseded (`current: false`) version, are treated identically to
+ * "doesn't exist" everywhere in this app — see `getStrategyById` and
+ * `listVisibleStrategies` in `strategies.ts`.
+ */
+export function isApprovedCurrent(strategy: StrategyTemplate): boolean {
+  return strategy.approvalStatus === 'approved' && strategy.current;
+}
+
+/** The FIELD gating model's intrusiveness gate: true when `IntrusiveProcedureGate` must confirm before showing this strategy's content. */
+export function requiresIntrusiveGate(strategy: StrategyTemplate): boolean {
+  return strategy.intrusivenessTier === 'more-intrusive';
 }
 
 /**

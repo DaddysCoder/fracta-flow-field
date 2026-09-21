@@ -151,6 +151,26 @@ for that integration pass (strategies added/modified, tiers and why, what
 literature was checked against its actual conclusions rather than assumed,
 and what was deliberately *not* built) are in **EVIDENCE.md**.
 
+## Gating model
+
+Two gates, both enforced in code (not just typed):
+
+- **Approval gate** — `getStrategyById()` and `listVisibleStrategies()` in
+  `strategies.ts` only ever return a strategy that's `approvalStatus:
+  'approved'` and `current: true` (checked via `isApprovedCurrent()` in
+  `types.ts`). A `draft`/`pending-review`/`retired` strategy is invisible
+  everywhere, including by direct URL. Every strategy shipped today is
+  `approved`, so this is currently a no-op on real data — it's there for
+  the next strategy that isn't.
+- **Intrusiveness gate** — set `intrusivenessTier: 'more-intrusive'` on a
+  `StrategyTemplate` and `StrategyDetail`/`PersonaliseFlow` wrap its
+  mechanism/citation/personalisation behind `IntrusiveProcedureGate`,
+  requiring an explicit per-session confirmation
+  ("less intrusive options have genuinely been tried first...") before any
+  of that content shows. Nothing seeded today sets this — see EVIDENCE.md's
+  "Gating model" section for how it was verified and why it matters for a
+  future escape-extinction/RIRD-type strategy.
+
 ## Not in this pass
 
 - **Variant content is still the main content gap.** Most strategies in
@@ -165,12 +185,11 @@ and what was deliberately *not* built) are in **EVIDENCE.md**.
   Access-to-tangibles specifically, more/stronger literature — both are
   still Practice-based/Emerging tier with a single source each. This is a
   content-authoring task, not a coding one.
-- **The `approvalStatus`/gating model is schema-only.** Nothing in this app
-  reads or enforces `StrategyTemplate.approvalStatus` or
-  `EligibilityFilters.excludedSupportTypes` — every strategy is seeded
-  `approved` and nothing filters on either field. There's no working gate to
-  keep a more intrusive procedure behind yet; see EVIDENCE.md's "Schema
-  change flagged, not made" for why this wasn't built in the evidence pass.
+- **`EligibilityFilters.excludedSupportTypes` is still not read anywhere.**
+  `approvalStatus` (the approval gate) and `intrusivenessTier` (the
+  intrusiveness gate) — the FIELD gating model — are now enforced, see
+  "Gating model" below. This one field is a separate, participant-level
+  exclusion list with no concrete case yet to build against.
 - **Optional "smart match" worker.** If a strategy ends up with many
   overlapping variants and local scoring can't confidently pick one, a
   Cloudflare Worker using Anthropic strictly as a *classifier* (forced

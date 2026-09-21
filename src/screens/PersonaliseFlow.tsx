@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getStrategyById } from '../lib/strategy-library/strategies';
-import { applicableFunctionsOf, type BehaviourFunction } from '../lib/strategy-library/types';
+import { applicableFunctionsOf, requiresIntrusiveGate, type BehaviourFunction } from '../lib/strategy-library/types';
 import { MechanismCitationUnit } from '../components/MechanismCitationUnit';
+import { IntrusiveProcedureGate } from '../components/IntrusiveProcedureGate';
 import { UpgradeMoment } from '../components/UpgradeMoment';
 import { AmbiguousMatchCard, PersonaliseErrorCard } from '../components/ErrorStates';
 import { useAuth } from '../state/auth';
@@ -124,20 +125,8 @@ export function PersonaliseFlow() {
   const generateLabel = state.status === 'revealed' ? 'Re-match variant' : 'Match variant';
   const revealDuration = reducedMotion ? '1ms' : '220ms';
 
-  return (
-    <div className="px-10 pt-9 pb-16 max-w-[1000px] mx-auto">
-      <div className="font-mono text-[11.5px] tracking-[0.1em] text-accent font-medium mb-4">
-        PERSONALISATION FLOW
-      </div>
-      <h1 className="font-bold text-[clamp(26px,3.4vw,34px)] tracking-tight mb-2.5">
-        A draft to review, never the final word.
-      </h1>
-      <p className="text-[15px] text-secondary mb-10 max-w-[600px] leading-relaxed">
-        Capacity note, then an optional matched draft, then a review step that&apos;s always editable
-        before saving &mdash; for <span className="font-semibold text-ink-soft">{strategy.name}</span>.
-      </p>
-      <ProfessionalToolDisclaimer className="mb-10 max-w-[600px]" />
-
+  const body = (
+    <>
       <div className="grid gap-8 mb-12" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
         <div className="bg-white rounded-card p-[22px] shadow-card">
           <div className="font-mono text-[11px] font-semibold tracking-wide text-tertiary mb-2.5">
@@ -299,6 +288,30 @@ export function PersonaliseFlow() {
           </div>
           <MechanismCitationUnit mechanism={strategy.mechanism} citation={strategy.citationShort} />
         </div>
+      )}
+    </>
+  );
+
+  return (
+    <div className="px-10 pt-9 pb-16 max-w-[1000px] mx-auto">
+      <div className="font-mono text-[11.5px] tracking-[0.1em] text-accent font-medium mb-4">
+        PERSONALISATION FLOW
+      </div>
+      <h1 className="font-bold text-[clamp(26px,3.4vw,34px)] tracking-tight mb-2.5">
+        A draft to review, never the final word.
+      </h1>
+      <p className="text-[15px] text-secondary mb-10 max-w-[600px] leading-relaxed">
+        Capacity note, then an optional matched draft, then a review step that&apos;s always editable
+        before saving &mdash; for <span className="font-semibold text-ink-soft">{strategy.name}</span>.
+      </p>
+      <ProfessionalToolDisclaimer className="mb-10 max-w-[600px]" />
+
+      {requiresIntrusiveGate(strategy) ? (
+        <IntrusiveProcedureGate strategyId={strategy.id} strategyName={strategy.name}>
+          {body}
+        </IntrusiveProcedureGate>
+      ) : (
+        body
       )}
 
       <div className="mt-8">

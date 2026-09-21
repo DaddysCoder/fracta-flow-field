@@ -1,4 +1,4 @@
-import type { StrategyTemplate } from './types';
+import { isApprovedCurrent, type StrategyTemplate } from './types';
 
 // NOTE: every `personalisationRecords` array below is still mostly
 // PLACEHOLDER CONTENT — starter records so the local matching logic in
@@ -609,6 +609,19 @@ export const STRATEGIES: StrategyTemplate[] = [
   },
 ];
 
+/**
+ * The FIELD gating model's approval gate, enforced: a `draft`,
+ * `pending-review` or `retired` strategy, or a superseded (`current:
+ * false`) version, is never returned here — direct navigation to its URL
+ * hits the same "Strategy not found" state as an unknown id, rather than
+ * leaking unapproved content.
+ */
 export function getStrategyById(id: string): StrategyTemplate | undefined {
-  return STRATEGIES.find((s) => s.id === id);
+  const strategy = STRATEGIES.find((s) => s.id === id);
+  return strategy && isApprovedCurrent(strategy) ? strategy : undefined;
+}
+
+/** Every strategy the approval gate lets a practitioner see — what `StrategyBrowser` lists. */
+export function listVisibleStrategies(): StrategyTemplate[] {
+  return STRATEGIES.filter(isApprovedCurrent);
 }

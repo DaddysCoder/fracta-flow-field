@@ -189,24 +189,52 @@ grounding for that boundary rather than attached to any strategy record.
   `StrategyBrowser`'s filter, `StrategyCard` and `StrategyDetail`'s function
   tag now read `applicableFunctionsOf()` instead of `.function` directly.
 
-## Schema change flagged, not made
+## Gating model — now built (follow-up to the initial pass)
 
-The task says to "keep more intrusive procedures behind the existing FIELD
-gating model." Reading the actual code: `approvalStatus` (draft/pending-
-review/approved/retired) and `EligibilityFilters.excludedSupportTypes` exist
-on the schema, but **nothing in this app currently reads or enforces either
-one** — every strategy, old and new, is seeded `approvalStatus: 'approved'`
-and nothing filters on it. There is no working "gating model" to keep new
-strategies behind yet; it's schema-only. Building real enforcement wasn't
-attempted here — that's a genuine "redesign FIELD's methodology"-scale change
-the task asked this pass *not* to do, so it's flagged rather than silently
-built or silently assumed to already work.
+The initial pass flagged rather than built this, because `approvalStatus`
+and `EligibilityFilters.excludedSupportTypes` existed on the schema but
+nothing read either one. On request, real enforcement was added:
+
+- **Approval gate** (`isApprovedCurrent()` in `types.ts`): `getStrategyById()`
+  and the new `listVisibleStrategies()` in `strategies.ts` now only ever
+  return a strategy that is `approvalStatus: 'approved'` **and**
+  `current: true`. A `draft`/`pending-review`/`retired` strategy, or a
+  superseded version, is treated identically to "doesn't exist" — including
+  by direct URL, which now 404s the same as an unknown id rather than
+  leaking unapproved content. `StrategyBrowser` was switched from reading
+  the raw `STRATEGIES` array to `listVisibleStrategies()`.
+- **Intrusiveness gate** (`requiresIntrusiveGate()` + the new
+  `intrusivenessTier?: 'standard' | 'more-intrusive'` field): when set,
+  `StrategyDetail` and `PersonaliseFlow` wrap the strategy's mechanism,
+  citation and personalisation behind `IntrusiveProcedureGate` — a
+  practitioner must explicitly confirm ("less intrusive options have
+  genuinely been tried first, and this is authorised...") before any of
+  that content shows, once per browser session
+  (`src/lib/strategy-library/intrusive-ack.ts`, `sessionStorage`-backed).
+  Nothing seeded in `strategies.ts` sets `'more-intrusive'` — there's still
+  no escape-extinction/RIRD strategy in this library — so the gate doesn't
+  fire on anything today. It was verified by temporarily setting it on an
+  existing strategy, screenshotting locked → confirm → unlocked, then
+  reverting that temporary change before committing (not left in the diff).
+
+This mechanically enforces "don't elevate escape extinction into a default
+first-line strategy" for whenever one is added: it would be seeded
+`pending-review` (invisible until a reviewer approves it) and
+`'more-intrusive'` (invisible even then until a practitioner explicitly
+confirms per session) — never a default suggestion.
+
+`EligibilityFilters.excludedSupportTypes` (a participant-level exclusion
+list, distinct from the strategy-level gates above) is still not read
+anywhere — flagged, not built, in this follow-up either: nothing in this
+pass's scope calls for excluding a support type per participant, and
+wiring it up without a concrete case to test against would be guessing at
+a shape rather than building it.
 
 ## Tests run and what they tested
 
 - `npm run build` (`tsc -b && vite build`) — the added/changed types and
   screens compile and the production bundle builds.
-- `npm test` (vitest, 30 tests, up from 25):
+- `npm test` (vitest, 45 tests, up from 25):
   - Existing 25: unchanged behaviour (profile storage/migrations, evidence-
     tier scoring, template supersession) still passes with the schema
     additions in place (all new fields are optional).
@@ -218,7 +246,26 @@ built or silently assumed to already work.
     all throws `no-variant-match` rather than returning something wrong;
     requesting a function on a strategy with no function-tagged variants at
     all still matches normally (the filter is a no-op, not a hard failure).
-- `npm run worker:typecheck` — unaffected (this pass didn't touch `worker/`).
+  - `isApprovedCurrent` (5 new): true only for approved+current; false for
+    each of `draft`/`pending-review`/`retired`; false for an approved
+    strategy that isn't the current version.
+  - `requiresIntrusiveGate` (3 new): false when unset or `'standard'`, true
+    for `'more-intrusive'`.
+  - `intrusive-ack` (3 new): unacknowledged until `acknowledge()`;
+    acknowledged after; acknowledging one strategy doesn't acknowledge
+    another (keyed per strategy id).
+  - `strategies.ts` gating sanity (4 new): every real seeded strategy is
+    approved+current today (so the gate is currently a no-op on real data,
+    confirming it doesn't accidentally hide anything that should be
+    visible); `listVisibleStrategies()` returns all of them;
+    `getStrategyById` returns `undefined` for an unknown id and the right
+    strategy for every real id.
+- `npm run worker:typecheck` — unaffected (neither pass touches `worker/`).
+- Manual: temporarily set `intrusivenessTier: 'more-intrusive'` on an
+  existing strategy (`redirect`), confirmed in a browser that
+  `StrategyDetail` shows the locked gate card instead of the mechanism/
+  citation, clicking "Confirm and continue" unlocks it, then reverted the
+  temporary change before committing it (not part of this diff).
 - Manual: ran the app in a browser and drove the FCT personalise flow
   end-to-end with the suite-connected demo profile — picked "Escape/avoidance"
   in the new function selector, matched, and got the escape-tagged AAC

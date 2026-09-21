@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { applicableFunctionsOf, resolveCurrentTemplate, type StrategyTemplate } from './types';
+import {
+  applicableFunctionsOf,
+  isApprovedCurrent,
+  requiresIntrusiveGate,
+  resolveCurrentTemplate,
+  type StrategyTemplate,
+} from './types';
 
 function template(overrides: Partial<StrategyTemplate>): StrategyTemplate {
   return {
@@ -60,5 +66,36 @@ describe('applicableFunctionsOf', () => {
   it('returns `applicableFunctions` when a strategy spans more than one function', () => {
     const t = template({ function: 'Attention', applicableFunctions: ['Attention', 'Escape/avoidance'] });
     expect(applicableFunctionsOf(t)).toEqual(['Attention', 'Escape/avoidance']);
+  });
+});
+
+describe('isApprovedCurrent — the FIELD gating model approval gate', () => {
+  it('is true for an approved, current strategy', () => {
+    expect(isApprovedCurrent(template({ approvalStatus: 'approved', current: true }))).toBe(true);
+  });
+
+  it.each(['draft', 'pending-review', 'retired'] as const)(
+    'is false for a %s strategy even when current',
+    (approvalStatus) => {
+      expect(isApprovedCurrent(template({ approvalStatus, current: true }))).toBe(false);
+    },
+  );
+
+  it('is false for an approved strategy that is not the current version', () => {
+    expect(isApprovedCurrent(template({ approvalStatus: 'approved', current: false }))).toBe(false);
+  });
+});
+
+describe('requiresIntrusiveGate — the FIELD gating model intrusiveness gate', () => {
+  it('is false when unset (the default for every strategy today)', () => {
+    expect(requiresIntrusiveGate(template({}))).toBe(false);
+  });
+
+  it("is false for 'standard'", () => {
+    expect(requiresIntrusiveGate(template({ intrusivenessTier: 'standard' }))).toBe(false);
+  });
+
+  it("is true for 'more-intrusive'", () => {
+    expect(requiresIntrusiveGate(template({ intrusivenessTier: 'more-intrusive' }))).toBe(true);
   });
 });
