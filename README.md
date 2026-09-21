@@ -138,18 +138,39 @@ product's actual OAuth app — set `FRAME_OAUTH_CLIENT_ID` /
 `getProviderConfig()` treats the provider as unconfigured and `/start`
 returns a 501 the button surfaces inline rather than pretending to connect.
 
+## Evidence library
+
+`strategies.ts` now has 12 strategies (3 added: `competing-stimulus-access`,
+`choice-task-adaptation`, `demand-fading`) and one canonical strategy that
+spans functions without duplication (`fct`, via `StrategyTemplate.
+applicableFunctions` + `PersonalisationRecord.tags.function` — see
+`applicableFunctionsOf()` in `types.ts`). Full citation metadata (including
+DOI, evidence type — systematic review vs. meta-analysis vs. single-case vs.
+package evidence — via `StrategyTemplate.evidenceSources`) and the QA report
+for that integration pass (strategies added/modified, tiers and why, what
+literature was checked against its actual conclusions rather than assumed,
+and what was deliberately *not* built) are in **EVIDENCE.md**.
+
 ## Not in this pass
 
-- **Variant content is the real gap right now, not the matching logic.**
-  Every strategy in `strategies.ts` ships exactly two placeholder
-  `personalisationRecords` — enough for `matchPersonalisedVariant()` to have
-  something real to score, not real coverage. The scoring/abstain/tie-break
-  logic in `src/ai/personalise.ts` doesn't need rework; it needs more
-  variants to work with (more comfort-threshold and communication-method
-  combinations per strategy) and more literature, particularly for the
-  thinner Sensory and Access-to-tangibles strategies — both currently
-  Practice-based/Emerging tier with a single source each. This is a
+- **Variant content is still the main content gap.** Most strategies in
+  `strategies.ts` still ship exactly two placeholder `personalisationRecords`
+  — enough for `matchPersonalisedVariant()` to have something real to score,
+  not real coverage. `fct` and the three strategies added in the evidence
+  pass got more (see EVIDENCE.md); `sensory-diet`, `choice-tangibles`,
+  `aac-request`, `redirect`, `debrief` and `high-prob` didn't. The
+  scoring/abstain/tie-break logic in `src/ai/personalise.ts` doesn't need
+  rework; it needs more variants to work with (more comfort-threshold and
+  communication-method combinations per strategy) and, for Sensory and
+  Access-to-tangibles specifically, more/stronger literature — both are
+  still Practice-based/Emerging tier with a single source each. This is a
   content-authoring task, not a coding one.
+- **The `approvalStatus`/gating model is schema-only.** Nothing in this app
+  reads or enforces `StrategyTemplate.approvalStatus` or
+  `EligibilityFilters.excludedSupportTypes` — every strategy is seeded
+  `approved` and nothing filters on either field. There's no working gate to
+  keep a more intrusive procedure behind yet; see EVIDENCE.md's "Schema
+  change flagged, not made" for why this wasn't built in the evidence pass.
 - **Optional "smart match" worker.** If a strategy ends up with many
   overlapping variants and local scoring can't confidently pick one, a
   Cloudflare Worker using Anthropic strictly as a *classifier* (forced

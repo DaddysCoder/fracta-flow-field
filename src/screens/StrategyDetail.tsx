@@ -1,6 +1,16 @@
 import { Link, useParams } from 'react-router-dom';
 import { getStrategyById } from '../lib/strategy-library/strategies';
+import { applicableFunctionsOf, type EvidenceType } from '../lib/strategy-library/types';
 import { EvidenceBadge, FunctionTag } from '../components/EvidenceBadge';
+
+const EVIDENCE_TYPE_LABELS: Record<EvidenceType, string> = {
+  'systematic-review': 'Systematic review',
+  'meta-analysis': 'Meta-analysis',
+  'narrative-review': 'Narrative review',
+  'scoping-review': 'Scoping review',
+  'single-case': 'Single-case experimental',
+  'treatment-package': 'Treatment package component',
+};
 
 export function StrategyDetail() {
   const { id } = useParams();
@@ -32,7 +42,7 @@ export function StrategyDetail() {
       <div className="bg-white rounded-card-lg p-6 sm:p-9 max-w-[760px] shadow-card">
         <div className="flex gap-3 mb-4">
           <EvidenceBadge tier={strategy.evidenceTier} />
-          <FunctionTag label={strategy.function} />
+          <FunctionTag label={applicableFunctionsOf(strategy).join(' · ')} />
         </div>
         <h2 className="font-bold text-2xl tracking-tight mb-6">{strategy.name}</h2>
 
@@ -51,6 +61,27 @@ export function StrategyDetail() {
             {strategy.citation}
           </div>
         </div>
+
+        {strategy.evidenceSources && strategy.evidenceSources.length > 1 && (
+          <div className="mb-6">
+            <div className="font-mono text-[11px] tracking-[0.08em] text-tertiary font-medium mb-2.5">
+              EVIDENCE SOURCES
+            </div>
+            <div className="flex flex-col gap-2.5">
+              {strategy.evidenceSources.map((source, i) => (
+                <div key={i} className="text-[13px] text-ink-soft leading-snug">
+                  <span className="font-mono text-[10.5px] text-accent font-semibold mr-1.5">
+                    {EVIDENCE_TYPE_LABELS[source.evidenceType]}
+                  </span>
+                  {source.citation}
+                  {source.doi && (
+                    <span className="text-tertiary"> &middot; doi:{source.doi}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mb-6">
           <div className="font-mono text-[11px] tracking-[0.08em] text-tertiary font-medium mb-2.5">

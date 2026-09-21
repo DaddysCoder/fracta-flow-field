@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveCurrentTemplate, type StrategyTemplate } from './types';
+import { applicableFunctionsOf, resolveCurrentTemplate, type StrategyTemplate } from './types';
 
 function template(overrides: Partial<StrategyTemplate>): StrategyTemplate {
   return {
@@ -48,5 +48,17 @@ describe('resolveCurrentTemplate', () => {
 
   it('returns undefined for an unknown templateId', () => {
     expect(resolveCurrentTemplate('missing', [])).toBeUndefined();
+  });
+});
+
+describe('applicableFunctionsOf', () => {
+  it("falls back to just `function` when `applicableFunctions` isn't set", () => {
+    const t = template({ function: 'Attention' });
+    expect(applicableFunctionsOf(t)).toEqual(['Attention']);
+  });
+
+  it('returns `applicableFunctions` when a strategy spans more than one function', () => {
+    const t = template({ function: 'Attention', applicableFunctions: ['Attention', 'Escape/avoidance'] });
+    expect(applicableFunctionsOf(t)).toEqual(['Attention', 'Escape/avoidance']);
   });
 });

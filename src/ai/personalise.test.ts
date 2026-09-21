@@ -128,4 +128,32 @@ describe('matchPersonalisedVariant', () => {
     expect(result.matchedFields).toEqual(['interests']);
     expect(result.missingFields).toEqual(['comfortThreshold']);
   });
+
+  it('excludes variants tagged for a different function than the one requested', () => {
+    const p = profile({ interests: 'trains, music' });
+    const variants = [
+      record({ id: 'escape', tags: { function: 'Escape/avoidance', interests: ['trains'] }, template: 'ESCAPE WORDING' }),
+      record({ id: 'tangible', tags: { function: 'Access to tangibles', interests: ['trains'] }, template: 'TANGIBLE WORDING' }),
+    ];
+    const result = matchPersonalisedVariant(strategy(variants), p, 'Escape/avoidance');
+    expect(result.draftText).toBe('ESCAPE WORDING');
+  });
+
+  it('throws no-variant-match when a function has no tagged variant at all', () => {
+    const variants = [record({ id: 'escape', tags: { function: 'Escape/avoidance' } })];
+    try {
+      matchPersonalisedVariant(strategy(variants), profile(), 'Attention');
+      expect.unreachable('expected a PersonaliseError to be thrown');
+    } catch (err) {
+      expect(err).toBeInstanceOf(PersonaliseError);
+      expect((err as PersonaliseError).kind).toBe('no-variant-match');
+    }
+  });
+
+  it('does not filter by function when no variant on the strategy is function-tagged', () => {
+    const p = profile({ interests: 'trains' });
+    const variants = [record({ id: 'only', tags: { interests: ['trains'] } })];
+    const result = matchPersonalisedVariant(strategy(variants), p, 'Escape/avoidance');
+    expect(result.draftText).toContain('trains');
+  });
 });

@@ -27,7 +27,16 @@ export type BehaviourFunction =
   | 'Escape/avoidance'
   | 'Sensory'
   | 'Access to tangibles'
-  | 'Communication';
+  | 'Communication'
+  /**
+   * Automatic (non-socially-mediated) reinforcement — the behaviour's
+   * consequence is produced by the behaviour itself, not by another
+   * person. Kept distinct from 'Sensory': a generic sensory activity
+   * (`sensory-diet`) is not equivalent to an individually validated
+   * competing stimulus for automatically reinforced challenging
+   * behaviour (`competing-stimulus-access`) — see EVIDENCE.md.
+   */
+  | 'Automatic';
 
 /** Display-facing "figure was updated" summary — kept as-is from the pre-alignment schema; still shown by `SupersededBand`. */
 export interface SupersededInfo {
@@ -67,7 +76,44 @@ export interface PersonalisationRecord {
     interests?: string[];
     communicationMethod?: string[];
     comfortThreshold?: ComfortLevel;
+    /**
+     * Which behavioural-function context this wording was authored for, on
+     * a canonical strategy that applies across more than one function (see
+     * `StrategyTemplate.applicableFunctions`) — e.g. FCT's "request break"
+     * wording is tagged `'Escape/avoidance'`, "request item" tagged
+     * `'Access to tangibles'`. `matchPersonalisedVariant` treats this as a
+     * hard filter, not a soft-scored preference like the fields above: a
+     * variant written for the wrong function is never an acceptable match,
+     * so it's excluded before scoring rather than merely scored lower.
+     * Absent on strategies with only one applicable function.
+     */
+    function?: BehaviourFunction;
   };
+}
+
+export type EvidenceType =
+  | 'systematic-review'
+  | 'meta-analysis'
+  | 'narrative-review'
+  | 'scoping-review'
+  | 'single-case'
+  | 'treatment-package';
+
+/**
+ * One source backing a strategy's evidence claim, with enough metadata to
+ * tell reviewers what kind of evidence it is — a systematic review/meta-
+ * analysis is not interchangeable with a single-case study or a component
+ * evaluated only inside a multicomponent treatment package. `citation`/
+ * `citationShort` on `StrategyTemplate` stay the single "permanent source"
+ * shown by `MechanismCitationUnit`; `evidenceSources` is the fuller record
+ * for strategies backed by more than one source (see EVIDENCE.md).
+ */
+export interface EvidenceSource {
+  citation: string;
+  citationShort: string;
+  evidenceType: EvidenceType;
+  doi?: string;
+  pmid?: string;
 }
 
 /**
@@ -85,12 +131,25 @@ export interface StrategyTemplate {
   shortDescription: string;
   evidenceTier: EvidenceTier;
   evidenceAuthorityTier: EvidenceAuthorityTier;
+  /** Primary/historical behavioural function this strategy is filed under. */
   function: BehaviourFunction;
+  /**
+   * Every function this canonical strategy is genuinely applicable to,
+   * including `function`. Absent means "just `function`" — most strategies
+   * don't need this. Set it on a strategy whose intervention is the same
+   * technique across functions (e.g. FCT) so it surfaces under every
+   * relevant function filter instead of being duplicated as separate
+   * strategies per function. Read via `applicableFunctionsOf()`, never
+   * `.function` directly, anywhere this matters (filtering, display).
+   */
+  applicableFunctions?: BehaviourFunction[];
   /** True when this is a responsive strategy rather than a function-based one. */
   responsive: boolean;
   mechanism: string;
   citation: string;
   citationShort: string;
+  /** Full evidence record when more than one source backs this strategy — see `EvidenceSource`. */
+  evidenceSources?: EvidenceSource[];
   howToUse: string[];
   /** Age band this template is written for, if restricted. Absent = no age restriction. */
   ageRange?: { minAge?: number; maxAge?: number };
@@ -110,6 +169,11 @@ export interface StrategyTemplate {
   current: boolean;
   /** `templateId` of the version that supersedes this one, if any. */
   supersededBy?: string;
+}
+
+/** Every function a strategy is applicable to — `applicableFunctions` when set, else just `function`. */
+export function applicableFunctionsOf(strategy: StrategyTemplate): BehaviourFunction[] {
+  return strategy.applicableFunctions ?? [strategy.function];
 }
 
 /**

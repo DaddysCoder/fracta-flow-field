@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getStrategyById } from '../lib/strategy-library/strategies';
+import { applicableFunctionsOf, type BehaviourFunction } from '../lib/strategy-library/types';
 import { MechanismCitationUnit } from '../components/MechanismCitationUnit';
 import { UpgradeMoment } from '../components/UpgradeMoment';
 import { AmbiguousMatchCard, PersonaliseErrorCard } from '../components/ErrorStates';
@@ -42,6 +43,7 @@ export function PersonaliseFlow() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [simulate, setSimulate] = useState<PersonaliseSimulation>('success');
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [targetFunction, setTargetFunction] = useState<BehaviourFunction | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -65,17 +67,23 @@ export function PersonaliseFlow() {
     );
   }
 
+  const functions = applicableFunctionsOf(strategy);
+  const needsFunctionChoice = functions.length > 1;
+  const effectiveFunction = needsFunctionChoice ? targetFunction ?? undefined : functions[0];
+
   async function handleGenerate() {
     if (plan === 'free') {
       setShowUpgrade(true);
       return;
     }
+    if (needsFunctionChoice && !targetFunction) return;
     setState({ status: 'loading' });
     try {
       const match = requestPersonalisedVariant(
         strategy!,
         profile,
         import.meta.env.DEV ? simulate : undefined,
+        effectiveFunction,
       );
       setState({
         status: 'revealed',
@@ -157,10 +165,33 @@ export function PersonaliseFlow() {
           </p>
           {missingFields.length === 0 ? (
             <>
+              {needsFunctionChoice && (
+                <div className="mb-3.5">
+                  <div className="text-[12.5px] font-semibold text-ink-soft mb-1.5">
+                    Which function is this for, for this participant?
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {functions.map((fn) => (
+                      <button
+                        key={fn}
+                        type="button"
+                        onClick={() => setTargetFunction(fn)}
+                        className={`px-2.5 py-1.5 rounded-lg text-[12px] font-semibold focus-ring ${
+                          targetFunction === fn
+                            ? 'bg-ink text-white'
+                            : 'bg-white border border-border text-muted hover:text-ink'
+                        }`}
+                      >
+                        {fn}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={handleGenerate}
-                disabled={state.status === 'loading'}
+                disabled={state.status === 'loading' || (needsFunctionChoice && !targetFunction)}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-btn bg-accent text-white text-[13.5px] font-semibold focus-ring hover:bg-accent-hover active:scale-[0.97] transition-all duration-100 disabled:opacity-60"
               >
                 <span className="font-mono text-[9px] font-semibold tracking-wide bg-white/20 px-1.5 py-0.5 rounded">
